@@ -1,5 +1,3 @@
-import {empty, set, HashMap} from "@typed/hashmap";
-
 class Learner {
     constructor(public id: number, 
             public difficultyStyle: boolean, 
@@ -27,16 +25,23 @@ class LearnerResponse {
     constructor(public q: SurveyQuestion) {}
 }
 
+/** Insert Path as value with Path.id as key */
+class MapPathProbability { }
+class MapPathSeqProbability { }
+class MapDateRow { }
+class MapSurveyQuestionString { }
+class MapDateUserAction { }
+
 /** timestamp is set at the time it is constructed */
 class KMUpdateRow {
     timestamp : Date;
     response : LearnerResponse;
-    pathBefore : HashMap<Path, Probability>;
-    pathAfter  : HashMap<Path, Probability>;
-    pathSeqBefore : HashMap<PathSequence, Probability>;
-    pathSeqAfter  : HashMap<PathSequence, Probability>;
-    constructor(_response: LearnerResponse, _pathBefore: HashMap<Path, Probability>, _pathAfter: HashMap<Path, Probability>,
-            _pathSeqBefore: HashMap<PathSequence, Probability>, _pathSeqAfter: HashMap<PathSequence, Probability>,) {
+    pathBefore : MapPathProbability;
+    pathAfter  : MapPathProbability;
+    pathSeqBefore : MapPathSeqProbability;
+    pathSeqAfter  : MapPathSeqProbability;
+    constructor(_response: LearnerResponse, _pathBefore: MapPathProbability, _pathAfter: MapPathProbability,
+            _pathSeqBefore: MapPathSeqProbability, _pathSeqAfter: MapPathSeqProbability,) {
         this.timestamp = new Date();
         this.response = _response;
         this.pathBefore = _pathBefore;
@@ -48,7 +53,7 @@ class KMUpdateRow {
 
 /** A set of KMUpdateRow's */
 class KMUpdateLog {
-    rowSet : HashMap<Date, KMUpdateRow>;
+    rowSet : MapDateRow;
     addEntry (input : KMUpdateRow) {
         this.rowSet = set(input.timestamp, input, this.rowSet);
     }
@@ -56,14 +61,14 @@ class KMUpdateLog {
 
 class LearnerKnowledgeModel {
     id : string;
-    byPath : HashMap<Path, Probability>;
-    byPathSequences : HashMap<PathSequence, Probability>;
+    byPath : MapPathProbability;
+    byPathSequences : MapPathSeqProbability;
     // What is the prior?
-    pathPrior : HashMap<Path, Probability>;
-    pathSeqPrior : HashMap<PathSequence, Probability>;
+    pathPrior : MapPathProbability;
+    pathSeqPrior : MapPathSeqProbability;
     updateLog: KMUpdateLog;
-    getPath () : HashMap<Path, Probability> { return this.byPath; }
-    getPathSequences() : HashMap<PathSequence, Probability> { return this.byPathSequences; }
+    getPath () : MapPathProbability { return this.byPath; }
+    getPathSequences() : MapPathSeqProbability { return this.byPathSequences; }
     setPathPrior(p: Path, prob: Probability) { this.pathPrior = set(p, prob, this.pathPrior); }
     setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior = set(ps, prob, this.pathSeqPrior); }
     update(answer: LearnerResponse) {
@@ -74,7 +79,7 @@ class LearnerKnowledgeModel {
 }
         
 class LearnerModel {
-    userActionLog : HashMap<Date, UserAction>;
+    userActionLog : MapDateUserAction;
     constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
     /** Records actions taken by this learner */
     addUserAction (ua: UserAction) {
@@ -86,10 +91,10 @@ class LearnerModel {
     /** What are all of the current answers to all of the questions
      * TODO: clarify are the keys here all of the questions total, or those asked so far?
      */
-    latestSurveyAnswers () : HashMap<SurveyQuestion, string> {
+    latestSurveyAnswers () : MapSurveyQuestionString {
         return empty();
     }
-    historicalSurveyAnswers () : HashMap<SurveyQuestion, string> {
+    historicalSurveyAnswers () : MapSurveyQuestionString {
         return empty();
     }
 }
