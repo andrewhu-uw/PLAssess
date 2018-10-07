@@ -1,6 +1,3 @@
-"use strict";
-exports.__esModule = true;
-var hashmap_1 = require("@typed/hashmap");
 var Learner = /** @class */ (function () {
     function Learner(id, difficultyStyle, mindset, firstName, lastName, preferredName, gender, birthdate, age) {
         this.id = id;
@@ -49,6 +46,33 @@ var LearnerResponse = /** @class */ (function () {
     }
     return LearnerResponse;
 }());
+/** Insert with Path.id as key */
+var MapPathProbability = /** @class */ (function () {
+    function MapPathProbability() {
+    }
+    return MapPathProbability;
+}());
+var MapPathSeqProbability = /** @class */ (function () {
+    function MapPathSeqProbability() {
+    }
+    return MapPathSeqProbability;
+}());
+var MapSurveyQuestionString = /** @class */ (function () {
+    function MapSurveyQuestionString() {
+    }
+    return MapSurveyQuestionString;
+}());
+/** Insert with Date.toDateString() as key. DO NOT USE toString() */
+var MapDateRow = /** @class */ (function () {
+    function MapDateRow() {
+    }
+    return MapDateRow;
+}());
+var MapDateUserAction = /** @class */ (function () {
+    function MapDateUserAction() {
+    }
+    return MapDateUserAction;
+}());
 /** timestamp is set at the time it is constructed */
 var KMUpdateRow = /** @class */ (function () {
     function KMUpdateRow(_response, _pathBefore, _pathAfter, _pathSeqBefore, _pathSeqAfter) {
@@ -66,7 +90,7 @@ var KMUpdateLog = /** @class */ (function () {
     function KMUpdateLog() {
     }
     KMUpdateLog.prototype.addEntry = function (input) {
-        this.rowSet = hashmap_1.set(input.timestamp, input, this.rowSet);
+        this.rowSet[input.timestamp.toDateString()] = input;
     };
     return KMUpdateLog;
 }());
@@ -75,11 +99,11 @@ var LearnerKnowledgeModel = /** @class */ (function () {
     }
     LearnerKnowledgeModel.prototype.getPath = function () { return this.byPath; };
     LearnerKnowledgeModel.prototype.getPathSequences = function () { return this.byPathSequences; };
-    LearnerKnowledgeModel.prototype.setPathPrior = function (p, prob) { this.pathPrior = hashmap_1.set(p, prob, this.pathPrior); };
-    LearnerKnowledgeModel.prototype.setPathSeqPrior = function (ps, prob) { this.pathSeqPrior = hashmap_1.set(ps, prob, this.pathSeqPrior); };
+    LearnerKnowledgeModel.prototype.setPathPrior = function (p, prob) { this.pathPrior[p.id] = prob; };
+    LearnerKnowledgeModel.prototype.setPathSeqPrior = function (ps, prob) { this.pathSeqPrior[ps.id] = prob; };
     LearnerKnowledgeModel.prototype.update = function (answer) {
         // create a KMUpdateRow with the input answer
-        var input = new KMUpdateRow(answer, hashmap_1.empty(), hashmap_1.empty(), hashmap_1.empty(), hashmap_1.empty());
+        var input = new KMUpdateRow(answer, {}, {}, {}, {});
         this.updateLog.addEntry(input);
     };
     return LearnerKnowledgeModel;
@@ -91,7 +115,7 @@ var LearnerModel = /** @class */ (function () {
     }
     /** Records actions taken by this learner */
     LearnerModel.prototype.addUserAction = function (ua) {
-        this.userActionLog = hashmap_1.set(new Date(), ua, this.userActionLog);
+        this.userActionLog[new Date().toDateString()] = ua;
     };
     LearnerModel.prototype.addSurveyAnswer = function (answer) {
         this.knowledgeModel.update(answer);
@@ -100,14 +124,17 @@ var LearnerModel = /** @class */ (function () {
      * TODO: clarify are the keys here all of the questions total, or those asked so far?
      */
     LearnerModel.prototype.latestSurveyAnswers = function () {
-        return hashmap_1.empty();
+        return {};
     };
     LearnerModel.prototype.historicalSurveyAnswers = function () {
-        return hashmap_1.empty();
+        return {};
     };
     return LearnerModel;
 }());
+/**
 var learner = new Learner(5, true, 4, "A", "Hu", "A", "fdsf", new Date(), 5);
 var lm = new LearnerModel(learner, new LearnerKnowledgeModel());
+
 var JSONString = JSON.stringify(lm);
 console.log(JSONString);
+*/ 

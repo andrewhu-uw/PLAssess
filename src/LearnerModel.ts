@@ -13,7 +13,7 @@ class Learner {
 /** Which part of program tracing is being assessed */
 class Path { id : string }
 /** The series of paths up to this point */
-class PathSequence { seq : Array<Path> }
+class PathSequence { id : string; seq : Array<Path>; }
 class Probability { prob : string }
 class UserAction { id : string }
 class SurveyQuestion {
@@ -25,11 +25,12 @@ class LearnerResponse {
     constructor(public q: SurveyQuestion) {}
 }
 
-/** Insert Path as value with Path.id as key */
+/** Insert with Path.id as key */
 class MapPathProbability { }
 class MapPathSeqProbability { }
-class MapDateRow { }
 class MapSurveyQuestionString { }
+/** Insert with Date.toDateString() as key. DO NOT USE toString() */
+class MapDateRow { }
 class MapDateUserAction { }
 
 /** timestamp is set at the time it is constructed */
@@ -55,7 +56,7 @@ class KMUpdateRow {
 class KMUpdateLog {
     rowSet : MapDateRow;
     addEntry (input : KMUpdateRow) {
-        this.rowSet = set(input.timestamp, input, this.rowSet);
+        this.rowSet[input.timestamp.toDateString()] = input;
     }
 }
 
@@ -69,11 +70,11 @@ class LearnerKnowledgeModel {
     updateLog: KMUpdateLog;
     getPath () : MapPathProbability { return this.byPath; }
     getPathSequences() : MapPathSeqProbability { return this.byPathSequences; }
-    setPathPrior(p: Path, prob: Probability) { this.pathPrior = set(p, prob, this.pathPrior); }
-    setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior = set(ps, prob, this.pathSeqPrior); }
+    setPathPrior(p: Path, prob: Probability) { this.pathPrior[p.id] = prob; }
+    setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior[ps.id] = prob; }
     update(answer: LearnerResponse) {
         // create a KMUpdateRow with the input answer
-        var input = new KMUpdateRow(answer, empty(), empty(), empty(), empty());
+        var input = new KMUpdateRow(answer, {}, {}, {}, {});
         this.updateLog.addEntry(input);
     }
 }
@@ -83,7 +84,7 @@ class LearnerModel {
     constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
     /** Records actions taken by this learner */
     addUserAction (ua: UserAction) {
-        this.userActionLog = set(new Date(), ua, this.userActionLog);
+        this.userActionLog[new Date().toDateString()] = ua;
     }
     addSurveyAnswer (answer: LearnerResponse) {
         this.knowledgeModel.update(answer);
@@ -92,10 +93,10 @@ class LearnerModel {
      * TODO: clarify are the keys here all of the questions total, or those asked so far?
      */
     latestSurveyAnswers () : MapSurveyQuestionString {
-        return empty();
+        return {};
     }
     historicalSurveyAnswers () : MapSurveyQuestionString {
-        return empty();
+        return {};
     }
 }
 
