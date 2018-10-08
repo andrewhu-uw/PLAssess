@@ -1,4 +1,5 @@
 import { Learner, LearnerKnowledgeModel, LearnerModel } from "./LearnerModel"
+import { initDB, loadDB } from "./init_test"
 
 function testSchemaLearnerModel() {
     var learner = new Learner(5, true, 4, "A", "Hu", "A", "fdsf", new Date(5000), 5);
@@ -13,4 +14,6 @@ function testSchemaLearnerModel() {
     }
 }
 
+initDB();
+loadDB();
 testSchemaLearnerModel();
