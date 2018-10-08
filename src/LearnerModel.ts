@@ -1,4 +1,4 @@
-import { MapID, MapDate} from "./Map"
+import { MapID, MapDate } from "./Map"
 
 export class Learner {
     constructor(public id: number, 
@@ -50,7 +50,7 @@ class KMUpdateRow {
 class KMUpdateLog {
     rowSet : MapDate<KMUpdateRow>;
     addEntry (input : KMUpdateRow) {
-        this.rowSet[input.timestamp.toDateString()] = input;
+        this.rowSet.set(input.timestamp, input);
     }
 }
 
@@ -64,7 +64,7 @@ export class LearnerKnowledgeModel {
     getPath () : MapID<Path, Probability> { return this.byPath; }
     getPathSequences() : MapID<PathSequence, Probability> { return this.byPathSequences; }
     setPathPrior(p: Path, prob: Probability) { this.pathPrior.set(p, prob); }
-    setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior[ps.id] = prob; }
+    setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior.set(ps, prob); }
     update(answer: LearnerResponse) {
         // create a KMUpdateRow with the input answer
         var input = new KMUpdateRow(answer, new MapID<Path, Probability>(), new MapID<Path, Probability>(), new MapID<PathSequence, Probability>(), new MapID<PathSequence, Probability>());
@@ -77,7 +77,7 @@ export class LearnerModel {
     constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
     /** Records actions taken by this learner */
     addUserAction (ua: UserAction) {
-        this.userActionLog[new Date().toDateString()] = ua;
+        this.userActionLog.set(new Date(), ua);
     }
     addSurveyAnswer (answer: LearnerResponse) {
         this.knowledgeModel.update(answer);
