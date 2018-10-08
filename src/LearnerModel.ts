@@ -1,4 +1,4 @@
-import { MapID } from "./Map"
+import { MapID, MapDate} from "./Map"
 
 //export module pla {
 
@@ -29,24 +29,16 @@ import { MapID } from "./Map"
         constructor(public q: SurveyQuestion) {}
     }
 
-    /** Insert with Path.id as key */
-    class MapPathProbability { }
-    class MapPathSeqProbability { }
-    class MapSurveyQuestionString { }
-    /** Insert with Date.toDateString() as key. DO NOT USE toString() */
-    class MapDateRow { }
-    class MapDateUserAction { }
-
     /** timestamp is set at the time it is constructed */
     class KMUpdateRow {
         timestamp : Date;
         response : LearnerResponse;
         pathBefore : MapID<Path, Probability>;
-        pathAfter  : MapPathProbability;
-        pathSeqBefore : MapPathSeqProbability;
-        pathSeqAfter  : MapPathSeqProbability;
-        constructor(_response: LearnerResponse, _pathBefore: MapID<Path, Probability>, _pathAfter: MapPathProbability,
-                _pathSeqBefore: MapPathSeqProbability, _pathSeqAfter: MapPathSeqProbability,) {
+        pathAfter  : MapID<Path, Probability>;
+        pathSeqBefore : MapID<PathSequence, Probability>;
+        pathSeqAfter  : MapID<PathSequence, Probability>;
+        constructor(_response: LearnerResponse, _pathBefore: MapID<Path, Probability>, _pathAfter: MapID<Path, Probability>,
+                _pathSeqBefore: MapID<PathSequence, Probability>, _pathSeqAfter: MapID<PathSequence, Probability>) {
             this.timestamp = new Date();
             this.response = _response;
             this.pathBefore = _pathBefore;
@@ -58,7 +50,7 @@ import { MapID } from "./Map"
 
     /** A set of KMUpdateRow's */
     class KMUpdateLog {
-        rowSet : MapDateRow;
+        rowSet : MapDate<KMUpdateRow>;
         addEntry (input : KMUpdateRow) {
             this.rowSet[input.timestamp.toDateString()] = input;
         }
@@ -66,25 +58,24 @@ import { MapID } from "./Map"
 
     export class LearnerKnowledgeModel {
         id : string;
-        byPath : MapPathProbability;
-        byPathSequences : MapPathSeqProbability;
-        // What is the prior?
-        pathPrior : MapPathProbability;
-        pathSeqPrior : MapPathSeqProbability;
+        byPath : MapID<Path, Probability>;
+        byPathSequences : MapID<PathSequence, Probability>;
+        pathPrior : MapID<Path, Probability>;
+        pathSeqPrior : MapID<PathSequence, Probability>;
         updateLog: KMUpdateLog;
-        getPath () : MapPathProbability { return this.byPath; }
-        getPathSequences() : MapPathSeqProbability { return this.byPathSequences; }
-        setPathPrior(p: Path, prob: Probability) { this.pathPrior[p.id] = prob; }
+        getPath () : MapID<Path, Probability> { return this.byPath; }
+        getPathSequences() : MapID<PathSequence, Probability> { return this.byPathSequences; }
+        setPathPrior(p: Path, prob: Probability) { this.pathPrior.set(p, prob); }
         setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior[ps.id] = prob; }
         update(answer: LearnerResponse) {
             // create a KMUpdateRow with the input answer
-            var input = new KMUpdateRow(answer, new MapID<Path, Probability>(), {}, {}, {});
+            var input = new KMUpdateRow(answer, new MapID<Path, Probability>(), new MapID<Path, Probability>(), new MapID<PathSequence, Probability>(), new MapID<PathSequence, Probability>());
             this.updateLog.addEntry(input);
         }
     }
             
     export class LearnerModel {
-        userActionLog : MapDateUserAction;
+        userActionLog : MapDate<UserAction>;
         constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
         /** Records actions taken by this learner */
         addUserAction (ua: UserAction) {
@@ -96,11 +87,11 @@ import { MapID } from "./Map"
         /** What are all of the current answers to all of the questions
          * TODO: clarify are the keys here all of the questions total, or those asked so far?
          */
-        latestSurveyAnswers () : MapSurveyQuestionString {
-            return {};
+        latestSurveyAnswers () : MapID<SurveyQuestion, string> {
+            return new MapID();
         }
-        historicalSurveyAnswers () : MapSurveyQuestionString {
-            return {};
+        historicalSurveyAnswers () : MapID<SurveyQuestion, string> {
+            return new MapID();
         }
     }
 //}
