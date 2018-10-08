@@ -1,4 +1,4 @@
-
+import { MapID } from "./Map"
 
 //export module pla {
 
@@ -41,11 +41,11 @@
     class KMUpdateRow {
         timestamp : Date;
         response : LearnerResponse;
-        pathBefore : MapPathProbability;
+        pathBefore : MapID<Path, Probability>;
         pathAfter  : MapPathProbability;
         pathSeqBefore : MapPathSeqProbability;
         pathSeqAfter  : MapPathSeqProbability;
-        constructor(_response: LearnerResponse, _pathBefore: MapPathProbability, _pathAfter: MapPathProbability,
+        constructor(_response: LearnerResponse, _pathBefore: MapID<Path, Probability>, _pathAfter: MapPathProbability,
                 _pathSeqBefore: MapPathSeqProbability, _pathSeqAfter: MapPathSeqProbability,) {
             this.timestamp = new Date();
             this.response = _response;
@@ -78,7 +78,7 @@
         setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior[ps.id] = prob; }
         update(answer: LearnerResponse) {
             // create a KMUpdateRow with the input answer
-            var input = new KMUpdateRow(answer, {}, {}, {}, {});
+            var input = new KMUpdateRow(answer, new MapID<Path, Probability>(), {}, {}, {});
             this.updateLog.addEntry(input);
         }
     }
