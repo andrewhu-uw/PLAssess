@@ -14,6 +14,6 @@ function testSchemaLearnerModel() {
     }
 }
 
+testSchemaLearnerModel();
 initDB();
 loadDB();
-testSchemaLearnerModel();
