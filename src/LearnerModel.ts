@@ -8,7 +8,7 @@ export class Learner {
             public lastName: string,
             public preferredName: string,
             public gender: string,
-            public birthdate: Date,
+            public birthDate: Date,
             public age: number) {    }
 }
 
@@ -71,7 +71,12 @@ export class LearnerKnowledgeModel {
         this.updateLog.addEntry(input);
     }
 }
-        
+
+export interface LearnerModelInterface {
+    userActionLog : Object;
+    learner: Learner;
+    knowledgeModel : LearnerKnowledgeModel;
+}
 export class LearnerModel {
     userActionLog : MapDate<UserAction>;
     constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
