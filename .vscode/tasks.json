@@ -8,6 +8,22 @@
             "type": "shell",
             "command": "mocha dist/test",
             "group": "test"
+        },
+        {
+            "label": "lint",
+            "type": "process",
+            "command": "tslint -c tslint.json 'src/**/*.ts'"
+        },
+        {
+            "type": "typescript",
+            "tsconfig": "tsconfig.json",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
