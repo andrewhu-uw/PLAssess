@@ -24,7 +24,7 @@ describe("LearnerModelSchema", () => {
             "userActionLog": {}
         };
 
-        expect(lm == handMade as LearnerModelInterface);
+        expect(handMade as LearnerModelInterface == lm);
     })
 })
 

@@ -1,4 +1,4 @@
-import { MapID, MapDate } from "./Map"
+import { MapID } from "./Map"
 
 export class Learner {
     constructor(public id: number, 
@@ -23,6 +23,7 @@ class SurveyQuestion {
     id : string
 }
 class LearnerResponse {
+    id: string;
     // TODO: Update with what Greg says should go in here
     constructor(public q: SurveyQuestion) {}
 }
@@ -30,6 +31,7 @@ class LearnerResponse {
 /** timestamp is set at the time it is constructed */
 class KMUpdateRow {
     timestamp : Date;
+    id: string;
     response : LearnerResponse;
     pathBefore : MapID<Path, Probability>;
     pathAfter  : MapID<Path, Probability>;
@@ -39,6 +41,7 @@ class KMUpdateRow {
             _pathSeqBefore: MapID<PathSequence, Probability>, _pathSeqAfter: MapID<PathSequence, Probability>) {
         this.timestamp = new Date();
         this.response = _response;
+        this.id = _response.id;
         this.pathBefore = _pathBefore;
         this.pathAfter = _pathAfter;
         this.pathSeqBefore = _pathSeqBefore;
@@ -48,9 +51,9 @@ class KMUpdateRow {
 
 /** A set of KMUpdateRow's */
 class KMUpdateLog {
-    rowSet : MapDate<KMUpdateRow>;
+    rowSet : MapID<LearnerResponse, KMUpdateRow>;
     addEntry (input : KMUpdateRow) {
-        this.rowSet.set(input.timestamp, input);
+        this.rowSet.set(input.response, input);
     }
 }
 
@@ -78,11 +81,11 @@ export interface LearnerModelInterface {
     knowledgeModel : LearnerKnowledgeModel;
 }
 export class LearnerModel {
-    userActionLog : MapDate<UserAction>;
+    userActionLog : MapID<UserAction, UserAction>;
     constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
     /** Records actions taken by this learner */
     addUserAction (ua: UserAction) {
-        this.userActionLog.set(new Date(), ua);
+        this.userActionLog.set(ua, ua);
     }
     addSurveyAnswer (answer: LearnerResponse) {
         this.knowledgeModel.update(answer);
