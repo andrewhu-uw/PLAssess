@@ -10,3 +10,12 @@ export class MapID<K extends HasID, V> {
         return this[key.id];
     }
 }
+
+export class SetID<K extends HasID> {
+    add(entry: K) {
+        this[entry.id] = entry;
+    }
+    remove(entry: K) {
+        this[entry.id] = {};
+    }
+}

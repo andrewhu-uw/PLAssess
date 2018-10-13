@@ -1,4 +1,4 @@
-import { MapID } from "./Map"
+import { MapID, SetID } from "./Map"
 
 export class Learner {
     constructor(public id: number, 
@@ -51,9 +51,9 @@ class KMUpdateRow {
 
 /** A set of KMUpdateRow's */
 class KMUpdateLog {
-    rowSet : MapID<LearnerResponse, KMUpdateRow>;
+    rowSet : SetID<KMUpdateRow>;
     addEntry (input : KMUpdateRow) {
-        this.rowSet.set(input.response, input);
+        this.rowSet.add(input);
     }
 }
 
@@ -81,11 +81,11 @@ export interface LearnerModelInterface {
     knowledgeModel : LearnerKnowledgeModel;
 }
 export class LearnerModel {
-    userActionLog : MapID<UserAction, UserAction>;
+    userActionLog : SetID<UserAction>;
     constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
     /** Records actions taken by this learner */
     addUserAction (ua: UserAction) {
-        this.userActionLog.set(ua, ua);
+        this.userActionLog.add(ua);
     }
     addSurveyAnswer (answer: LearnerResponse) {
         this.knowledgeModel.update(answer);
