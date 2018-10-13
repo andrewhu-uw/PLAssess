@@ -2,7 +2,7 @@ import { Learner, LearnerKnowledgeModel, LearnerModel } from "./LearnerModel"
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 
-var serviceAccount = require("../firestore-private-key.json");
+var serviceAccount = require("../priv/firestore-private-key.json");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
