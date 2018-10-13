@@ -6,7 +6,7 @@
         {
             "label": "test",
             "type": "shell",
-            "command": "node dist/test.js",
+            "command": "mocha dist/test",
             "group": "test"
         }
     ]
