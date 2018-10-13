@@ -10,7 +10,7 @@ Backend for the PLAssess project
 PLAssess
 ├─src
 ├─dist
-└─private-key.json
+└─firestore-private-key.json
 ```
 
 `src` is where your source code goes, `dist` is where transpiled code goes
