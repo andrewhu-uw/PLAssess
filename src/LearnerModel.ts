@@ -1,26 +1,26 @@
-import { MapID, SetID } from "./Map"
+import { MapID, SetID } from "./Map";
 
 export class Learner {
-    constructor(public id: number, 
-            public difficultyStyle: boolean, 
-            public mindset: number, 
-            public firstName: string,
-            public lastName: string,
-            public preferredName: string,
-            public gender: string,
-            public birthDate: Date,
-            public age: number) {    }
+    constructor(public id: number,
+                public difficultyStyle: boolean,
+                public mindset: number,
+                public firstName: string,
+                public lastName: string,
+                public preferredName: string,
+                public gender: string,
+                public birthDate: Date,
+                public age: number) {    }
 }
 
 /** Which part of program tracing is being assessed */
 class Path { id : string }
 /** The series of paths up to this point */
-class PathSequence { id : string; seq : Array<Path>; }
+class PathSequence { id : string; seq : Path[]; }
 class Probability { prob : string }
 class UserAction { id : string }
 class SurveyQuestion {
     // TODO: should this just be the question as a string or an id?
-    id : string
+    id : string;
 }
 class LearnerResponse {
     id: string;
