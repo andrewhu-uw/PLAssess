@@ -5,8 +5,7 @@ import { Path, Probability } from "./LearnerModel";
 
 describe("MapID", () => {
     it("Should be an empty object on construction (without types)", () => {
-        var empty = new MapID();
-        expect(empty).to.equal({});
+        expect(new MapID() as unknown == {});
     });
     it("Should be an empty object on construction (with types)", () => {
         var empty = new MapID<Path, Probability>();
@@ -20,7 +19,11 @@ describe("MapID", () => {
 
         var onePair = new MapID<Path, Probability>();
         onePair.set(pathKey, probValue);
-        //expect(JSON.stringify(onePair)).to.equal(JSON.stringify({"abfd":{"prob":"42%"}}));
-        expect(onePair).to.equal({"abfd":{"prob":"42%"}});
+
+        var handMade = new MapID<Path, Probability>();
+        var handMadeProbability = new Probability();
+        handMadeProbability.prob = "42%";
+        handMade["abfd"] = handMadeProbability;
+        expect(onePair == handMade);
     })
 });
