@@ -1,10 +1,10 @@
 import { Learner, LearnerKnowledgeModel, LearnerModel, LearnerModelInterface } from "./LearnerModel"
 import { initDB, loadDB } from "./init_test"
 import { expect } from "chai";
-import { describe } from "mocha";
+import "mocha";
 
 describe("LearnerModelSchema", () => {
-    it ("should be equal to the example", () => {
+    it ("Should be equal to the example", () => {
         var learner = new Learner(5, true, 4, "A", "Hu", "A", "fdsf", new Date(5000), 5);
         var lm = new LearnerModel(learner, new LearnerKnowledgeModel());
 
