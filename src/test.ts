@@ -1,7 +1,7 @@
 import { Learner, LearnerKnowledgeModel, LearnerModel, LearnerModelInterface } from "./LearnerModel"
 import { initDB, loadDB } from "./init_test"
 import { expect } from "chai";
-import "mocha";
+import { describe } from "mocha";
 
 describe("LearnerModelSchema", () => {
     it ("should be equal to the example", () => {

@@ -70,7 +70,11 @@ export class LearnerKnowledgeModel {
     setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior.set(ps, prob); }
     update(answer: LearnerResponse) {
         // create a KMUpdateRow with the input answer
-        var input = new KMUpdateRow(answer, new MapID<Path, Probability>(), new MapID<Path, Probability>(), new MapID<PathSequence, Probability>(), new MapID<PathSequence, Probability>());
+        var input = new KMUpdateRow(answer, 
+                                    new MapID<Path, Probability>(), 
+                                    new MapID<Path, Probability>(), 
+                                    new MapID<PathSequence, Probability>(), 
+                                    new MapID<PathSequence, Probability>());
         this.updateLog.addEntry(input);
     }
 }
