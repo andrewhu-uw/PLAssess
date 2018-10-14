@@ -13,35 +13,28 @@ describe("MapID", () => {
     });
 
     it("Should set a value at the property corresponding to the key's id", () => {
-        var pathKey = new Path();
-        pathKey.id = "abfd";
-        var probValue = new Probability();
-        probValue.prob = "42%";
+        var pathKey = new Path("abfd");
+        var probValue = new Probability("42%");
 
         var onePair = new MapID<Path, Probability>();
         onePair.set(pathKey, probValue);
 
         var handMade = new MapID<Path, Probability>();
-        var handMadeProbability = new Probability();
-        handMadeProbability.prob = "42%";
+        var handMadeProbability = new Probability("42%");
         handMade["abfd"] = handMadeProbability;
         expect(onePair == handMade);
     });
     it("Should overwrite value at same key", () => {
-        var pathKey = new Path();
-        pathKey.id = "abfd";
-        var probOne = new Probability();
-        probOne.prob = "42%";
-        var probTwo = new Probability();
-        probTwo.prob = "100%";
+        var pathKey = new Path("abfd");
+        var probOne = new Probability("42%");
+        var probTwo = new Probability("100%");
 
         var overwritePair = new MapID<Path, Probability>();
         overwritePair.set(pathKey, probOne);
         overwritePair.set(pathKey, probTwo);
 
         var handMade = new MapID<Path, Probability>();
-        var handMadeProbability = new Probability();
-        handMadeProbability.prob = "100%";
+        var handMadeProbability = new Probability("100%");
         handMade["abfd"] = handMadeProbability;
         expect(overwritePair == handMade);
     })

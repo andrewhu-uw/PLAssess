@@ -13,10 +13,10 @@ export class Learner {
 }
 
 /** Which part of program tracing is being assessed */
-export class Path { id : string }
+export class Path { constructor(public id: string) {} }
 /** The series of paths up to this point */
 class PathSequence { id : string; seq : Path[]; }
-export class Probability { prob : string }
+export class Probability { constructor(public prob: string) {} }
 class UserAction { id : string }
 class SurveyQuestion {
     // TODO: should this just be the question as a string or an id?
