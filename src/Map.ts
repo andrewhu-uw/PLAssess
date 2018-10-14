@@ -3,9 +3,6 @@ interface HasID {
 }
 
 export class MapID<K extends HasID, V> {
-    // buildFrom(data: Object) {
-    //     Object.assign(this, data);
-    // }
     set(key: K, val: V) {
         this[key.id] = val;
     }
