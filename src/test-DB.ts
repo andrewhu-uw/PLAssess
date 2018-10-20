@@ -32,15 +32,20 @@ describe("Firestore Cloud DB", () => {
 
     it ("Should load objects that are structurally equal to the data loaded", () => {
         // Load example data from Firebase
+        var tobeLoaded : LearnerModel;
+        
+        var learner = new Learner(5, true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000), 5);
+        var handMadeLM = new LearnerModel(learner, new LearnerKnowledgeModel());
+
         db.collection('LearnerModel').doc('AHu').get().then((lm) => {
-            var learner = new Learner(5, true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000), 5);
-            var handMadeLM = new LearnerModel(learner, new LearnerKnowledgeModel());
 
             console.log(JSON.stringify(lm.data()));
-            expect(lm.data() as LearnerModel).to.deep.equal(handMadeLM);
+            tobeLoaded = lm.data() as LearnerModel;
         })
         .catch((err) => {
             console.log("Error getting data: ", err);
-        })
+        });
+
+        expect(tobeLoaded).to.deep.equal(handMadeLM);
     });
 })
