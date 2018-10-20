@@ -1,5 +1,4 @@
 import { Learner, LearnerKnowledgeModel, LearnerModel, LearnerModelInterface } from "./LearnerModel"
-import { initDB, loadDB } from "./init_test"
 import { expect } from "chai";
 import "mocha";
 
@@ -27,6 +26,3 @@ describe("LearnerModelSchema", () => {
         expect(handMade as LearnerModelInterface == lm);
     })
 })
-
-initDB();
-loadDB();
