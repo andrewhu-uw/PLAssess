@@ -40,5 +40,23 @@ describe("MapID", () => {
         var handMadeProbability = new Probability("100%");
         handMade["abfd"] = handMadeProbability;
         expect(overwritePair).to.deep.equal(handMade);
+    });
+    it("Should not structurally equal different maps", () => {
+        var pathKey = new Path("abfd");
+        var probValue = new Probability("42%");
+
+        var onePair = new MapID<Path, Probability>();
+        onePair.set(pathKey, probValue);
+
+        expect(onePair).to.not.deep.equal({"hello":42});
+    });
+    it("Should structurally equal plain JS objects", () => {
+        var pathKey = new Path("abfd");
+        var probValue = new Probability("42%");
+
+        var onePair = new MapID<Path, Probability>();
+        onePair.set(pathKey, probValue);
+
+        expect(onePair).to.deep.equal({"abfd":{"prob":"42%"}});
     })
 });

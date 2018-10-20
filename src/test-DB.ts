@@ -37,7 +37,7 @@ describe("Firestore Cloud DB", () => {
             var handMadeLM = new LearnerModel(learner, new LearnerKnowledgeModel());
 
             console.log(JSON.stringify(lm.data()));
-            expect(lm.data()).to.deep.equal(handMadeLM);
+            expect(lm.data() as LearnerModel).to.deep.equal(handMadeLM);
         })
         .catch((err) => {
             console.log("Error getting data: ", err);
