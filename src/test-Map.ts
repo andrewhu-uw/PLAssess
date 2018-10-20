@@ -5,11 +5,14 @@ import { Path, Probability } from "./LearnerModel";
 
 describe("MapID", () => {
     it("Should be an empty object on construction (without types)", () => {
-        expect(new MapID() as unknown == {});
+        var empty = new MapID();
+        expect(empty).to.deep.equal({});
+        expect(empty).to.not.equal({});
     });
     it("Should be an empty object on construction (with types)", () => {
         var empty = new MapID<Path, Probability>();
-        expect(empty == {} as MapID<Path, Probability>);
+        expect(empty).to.deep.equal({});
+        expect(empty).to.not.equal({});
     });
 
     it("Should set a value at the property corresponding to the key's id", () => {
@@ -22,7 +25,7 @@ describe("MapID", () => {
         var handMade = new MapID<Path, Probability>();
         var handMadeProbability = new Probability("42%");
         handMade["abfd"] = handMadeProbability;
-        expect(onePair == handMade);
+        expect(onePair).to.deep.equal(handMade);
     });
     it("Should overwrite value at same key", () => {
         var pathKey = new Path("abfd");
@@ -36,6 +39,6 @@ describe("MapID", () => {
         var handMade = new MapID<Path, Probability>();
         var handMadeProbability = new Probability("100%");
         handMade["abfd"] = handMadeProbability;
-        expect(overwritePair == handMade);
+        expect(overwritePair).to.deep.equal(handMade);
     })
 });
