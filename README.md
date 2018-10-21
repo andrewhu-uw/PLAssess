@@ -57,7 +57,7 @@ in a "done" function as a parameter, which can be called after the promise is re
 
 ```typescript
 it ("Should do...", (done) => {
-//                   ^^^^
+//     done function ^^^^
   myPromiseFunc().then((result) => {
     // do stuff with the result
     
