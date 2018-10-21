@@ -1,5 +1,5 @@
 import { MapID, SetID } from "./Map";
-import {DB, toPlainObject} from "./test-DB";
+import {DB, toPlainObject} from "./DB";
 
 interface FirestoreSync {
     send();
