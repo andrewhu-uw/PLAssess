@@ -55,7 +55,7 @@ describe("Firestore Cloud DB", () => {
             toPlainObject(lm)
         );
         // Boilerplate update method
-        lm.push();
+        lm.send();
         console.log(toPlainObject(lm));
         console.log("Type of plain LM's date:", typeof((toPlainObject(lm) as LearnerModel).learner.birthDate));
     });

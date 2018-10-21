@@ -2,8 +2,8 @@ import { MapID, SetID } from "./Map";
 import {DB, toPlainObject} from "./test-DB";
 
 interface FirestoreSync {
-    push();
-    pull();
+    send();
+    load();
 }
 
 export class Learner implements FirestoreSync{
@@ -16,12 +16,12 @@ export class Learner implements FirestoreSync{
                 public gender: string,
                 public birthDate: string,
                 public age: number) {    }
-    push () {
+    send () {
         DB.getInstance().collection('Learner').doc(this.id).set(
             toPlainObject(this)
         );
     }
-    pull () {
+    load () {
         throw new Error("Not yet implemented");
     }
 }
@@ -94,12 +94,12 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<PathSequence, Probability>());
         this.updateLog.addEntry(input);
     }
-    push() {
+    send() {
         DB.getInstance().collection('Learner').doc(this.id).set(
             toPlainObject(this)
         );
     }
-    pull() {
+    load() {
         throw new Error("Not yet implemented");
     }
 }
@@ -123,9 +123,9 @@ export class LearnerModel implements FirestoreSync {
     historicalSurveyAnswers () : MapID<SurveyQuestion, string> {
         return new MapID();
     }
-    push () {
-        this.learner.push();
-        this.knowledgeModel.push();
+    send () {
+        this.learner.send();
+        this.knowledgeModel.send();
         // Don't do this, we want to store the Learner and LearnerKnowledgeModel in separate docs 
         // DB.getInstance().collection('LearnerModel').doc(this.learner.id).set(
         //     toPlainObject(this)
@@ -136,8 +136,10 @@ export class LearnerModel implements FirestoreSync {
             //"userActionLog" : this.userActionLog
         });
     }
-    /** Only look for changes, like in the Friendly Eats example */
-    pull () {
+    /** Only look for changes, like in the Friendly Eats example 
+     *  Actually, this may not be necessary at all
+    */
+    load () {
         throw new Error("Not yet implemented");
     }
 }
