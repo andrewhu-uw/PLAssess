@@ -69,3 +69,14 @@ it ("Should do...", (done) => {
   });
 })
 ```
+
+## Architecture
+
+### Firebase Connection
+
+The connection to the firebase DB is controlled by the DB module in DB.ts
+
+`DB.init()` must be called before any transactions with the database can be made.
+After that, objects can be loaded from the database with the `DB.get*()` functions and
+any class that implements the `FirestoreSync` interface can be used to send updates
+ to the database.
