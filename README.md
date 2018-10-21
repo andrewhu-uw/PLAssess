@@ -55,7 +55,7 @@ has the same value, then you want to use the `expect(blah).to.deep.equal(bleh)` 
 If you have a test that uses promises, you want to first, write the test as a function that takes 
 in a "done" function as a parameter, which can be called after the promise is resolved
 
-```
+```typescript
 it ("Should do...", (done) => {
 //                   ^^^^
   myPromiseFunc().then((result) => {
