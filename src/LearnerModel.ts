@@ -1,8 +1,13 @@
 import { MapID, SetID } from "./Map";
-import {DB} from "./test-DB";
+import {DB, toPlainObject} from "./test-DB";
 
-export class Learner {
-    constructor(public id: number,
+interface FirestoreSync {
+    push();
+    pull();
+}
+
+export class Learner implements FirestoreSync{
+    constructor(public id: string,
                 public difficultyStyle: boolean,
                 public mindset: number,
                 public firstName: string,
@@ -11,6 +16,14 @@ export class Learner {
                 public gender: string,
                 public birthDate: string,
                 public age: number) {    }
+    push () {
+        DB.getInstance().collection('Learner').doc(this.id).set(
+            toPlainObject(this)
+        );
+    }
+    pull () {
+        throw new Error("Not yet implemented");
+    }
 }
 
 /** Which part of program tracing is being assessed */
@@ -58,13 +71,16 @@ class KMUpdateLog {
     }
 }
 
-export class LearnerKnowledgeModel {
+export class LearnerKnowledgeModel implements FirestoreSync {
     id : string;
     byPath : MapID<Path, Probability>;
     byPathSequences : MapID<PathSequence, Probability>;
     pathPrior : MapID<Path, Probability>;
     pathSeqPrior : MapID<PathSequence, Probability>;
     updateLog: KMUpdateLog;
+    constructor(_id : string) {
+        this.id = _id;
+    }
     getPath () : MapID<Path, Probability> { return this.byPath; }
     getPathSequences() : MapID<PathSequence, Probability> { return this.byPathSequences; }
     setPathPrior(p: Path, prob: Probability) { this.pathPrior.set(p, prob); }
@@ -78,14 +94,17 @@ export class LearnerKnowledgeModel {
                                     new MapID<PathSequence, Probability>());
         this.updateLog.addEntry(input);
     }
+    push() {
+        DB.getInstance().collection('Learner').doc(this.id).set(
+            toPlainObject(this)
+        );
+    }
+    pull() {
+        throw new Error("Not yet implemented");
+    }
 }
 
-export interface LearnerModelInterface {
-    userActionLog : Object;
-    learner: Learner;
-    knowledgeModel : LearnerKnowledgeModel;
-}
-export class LearnerModel {
+export class LearnerModel implements FirestoreSync {
     userActionLog : SetID<UserAction>;
     constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
     /** Records actions taken by this learner */
@@ -104,7 +123,21 @@ export class LearnerModel {
     historicalSurveyAnswers () : MapID<SurveyQuestion, string> {
         return new MapID();
     }
-    send () {
-        DB.getInstance();
+    push () {
+        this.learner.push();
+        this.knowledgeModel.push();
+        // Don't do this, we want to store the Learner and LearnerKnowledgeModel in separate docs 
+        // DB.getInstance().collection('LearnerModel').doc(this.learner.id).set(
+        //     toPlainObject(this)
+        // );
+        DB.getInstance().collection('LearnerModel').doc(this.learner.id).set({
+            "learner" : this.learner.id,
+            "knowledgeModel" : this.knowledgeModel.id,
+            //"userActionLog" : this.userActionLog
+        });
+    }
+    /** Only look for changes, like in the Friendly Eats example */
+    pull () {
+        throw new Error("Not yet implemented");
     }
 }
