@@ -1,4 +1,5 @@
 import { MapID, SetID } from "./Map";
+import {DB} from "./test-DB";
 
 export class Learner {
     constructor(public id: number,
@@ -102,5 +103,8 @@ export class LearnerModel {
     }
     historicalSurveyAnswers () : MapID<SurveyQuestion, string> {
         return new MapID();
+    }
+    send () {
+        DB.getInstance();
     }
 }
