@@ -95,7 +95,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
         this.updateLog.addEntry(input);
     }
     send() {
-        DB.getInstance().collection('Learner').doc(this.id).set(
+        DB.getInstance().collection('LearnerKnowledgeModel').doc(this.id).set(
             toPlainObject(this)
         );
     }
