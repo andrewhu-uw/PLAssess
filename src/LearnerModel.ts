@@ -8,7 +8,7 @@ export class Learner {
                 public lastName: string,
                 public preferredName: string,
                 public gender: string,
-                public birthDate: Date,
+                public birthDate: string,
                 public age: number) {    }
 }
 
@@ -17,7 +17,7 @@ export class Path { constructor(public id: string) {} }
 /** The series of paths up to this point */
 class PathSequence { id : string; seq : Path[]; }
 export class Probability { constructor(public prob: string) {} }
-class UserAction { id : string }
+export class UserAction { id : string }
 class SurveyQuestion {
     // TODO: should this just be the question as a string or an id?
     id : string;
@@ -30,7 +30,7 @@ class LearnerResponse {
 
 /** timestamp is set at the time it is constructed */
 class KMUpdateRow {
-    timestamp : Date;
+    timestamp : string;
     id: string;
     response : LearnerResponse;
     pathBefore : MapID<Path, Probability>;
@@ -39,7 +39,7 @@ class KMUpdateRow {
     pathSeqAfter  : MapID<PathSequence, Probability>;
     constructor(_response: LearnerResponse, _pathBefore: MapID<Path, Probability>, _pathAfter: MapID<Path, Probability>,
             _pathSeqBefore: MapID<PathSequence, Probability>, _pathSeqAfter: MapID<PathSequence, Probability>) {
-        this.timestamp = new Date();
+        this.timestamp = new Date().toJSON();
         this.response = _response;
         this.id = _response.id;
         this.pathBefore = _pathBefore;

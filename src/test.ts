@@ -4,7 +4,7 @@ import "mocha";
 
 describe("LearnerModelSchema", () => {
     it ("Should be equal to the example", () => {
-        var learner = new Learner(5, true, 4, "A", "Hu", "A", "fdsf", new Date(5000), 5);
+        var learner = new Learner(5, true, 4, "A", "Hu", "A", "fdsf", new Date(5000).toJSON(), 5);
         var lm = new LearnerModel(learner, new LearnerKnowledgeModel());
 
         var handMade = {
@@ -16,13 +16,12 @@ describe("LearnerModelSchema", () => {
                 "lastName": "Hu",
                 "preferredName": "A",
                 "gender": "fdsf",
-                "birthDate": new Date(5000),
+                "birthDate": new Date(5000).toJSON(),
                 "age": 5
             },
-            "knowledgeModel": {},
-            "userActionLog": {}
+            "knowledgeModel": {}
         };
 
-        expect(handMade as LearnerModelInterface == lm);
+        expect(lm).to.deep.equal(handMade);
     })
 })

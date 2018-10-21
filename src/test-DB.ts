@@ -1,8 +1,10 @@
-import { Learner, LearnerKnowledgeModel, LearnerModel } from "./LearnerModel"
+import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction } from "./LearnerModel"
+import { SetID } from "./Map"
 import {expect} from "chai";
 import "mocha";
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
+import { doesNotThrow } from "assert";
 
 var serviceAccount = require("../priv/firestore-private-key.json");
 var db;
@@ -18,9 +20,10 @@ describe("Firestore Cloud DB", () => {
             databaseURL: "https://plasses-d4707.firebaseio.com"
         });
         db = admin.firestore();
+        db.settings({timestampesInSnapshots: true});
 
         // Create example data
-        var learner = new Learner(5, true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000), 5);
+        var learner = new Learner(5, true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
         var lm = new LearnerModel(learner, new LearnerKnowledgeModel());
 
         // Sync to Firebase
@@ -28,24 +31,25 @@ describe("Firestore Cloud DB", () => {
             toPlainObject(lm)
         )
         console.log(toPlainObject(lm));
+        console.log("Type of plain LM's date:", typeof((toPlainObject(lm) as LearnerModel).learner.birthDate));
     });
 
-    it ("Should load objects that are structurally equal to the data loaded", () => {
+    it ("Should load objects that are structurally equal to the data uploaded", (done) => {
         // Load example data from Firebase
-        var tobeLoaded : LearnerModel;
-        
-        var learner = new Learner(5, true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000), 5);
+        var learner = new Learner(5, true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
         var handMadeLM = new LearnerModel(learner, new LearnerKnowledgeModel());
 
-        db.collection('LearnerModel').doc('AHu').get().then((lm) => {
-
-            console.log(JSON.stringify(lm.data()));
-            tobeLoaded = lm.data() as LearnerModel;
+        db.collection('LearnerModel').doc('AHu').get().then((doc) => {
+            var lm : LearnerModel = doc.data();
+            expect(lm).to.deep.equal(handMadeLM);
+            console.log("Received: ", typeof(lm.learner.birthDate), typeof(handMadeLM.learner.birthDate));
+            done();
         })
         .catch((err) => {
             console.log("Error getting data: ", err);
+            done(err);
         });
 
-        expect(tobeLoaded).to.deep.equal(handMadeLM);
+        
     });
 })
