@@ -4,7 +4,7 @@ import "mocha";
 
 describe("LearnerModelSchema", () => {
     it ("Should be equal to the example", () => {
-        var learner = new Learner("5", true, 4, "A", "Hu", "A", "fdsf", new Date(5000).toJSON(), 5);
+        var learner = new Learner(true, 4, "A", "Hu", "A", "fdsf", new Date(5000).toJSON(), 5);
         var lm = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
 
         var handMade = {

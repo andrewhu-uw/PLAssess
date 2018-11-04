@@ -9,7 +9,7 @@ describe("Firestore Cloud DB", () => {
         DB.init();
 
         // Create example data
-        var learner = new Learner("5", true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
+        var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
         var lm = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
 
         // Sync to Firebase
@@ -29,7 +29,7 @@ describe("Firestore Cloud DB", () => {
 
     it ("Should load objects that are structurally equal to the data uploaded", (done) => {
         // Load example data from Firebase
-        var learner = new Learner("5", true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
+        var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
         var handMadeLM = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
 
         DB.getInstance().collection('LearnerModel').doc('AHu').get().then((doc) => {

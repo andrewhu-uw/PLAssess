@@ -6,8 +6,8 @@ interface FirestoreSync {
 }
 
 export class Learner implements FirestoreSync{
-    constructor(public id: string,
-                public difficultyStyle: boolean,
+    id : string;
+    constructor(public difficultyStyle: boolean,
                 public mindset: number,
                 public firstName: string,
                 public lastName: string,
@@ -16,6 +16,21 @@ export class Learner implements FirestoreSync{
                 public birthDate: string,
                 public age: number) {    }
     send () {
+        // Adding a new object
+        if (this.id == null) {
+            DB.getInstance().collection('Learner').add(
+                toPlainObject(this)
+            ).then((docRef) => {
+                // Set the local ID to the Firebase auto ID
+                this.id = docRef.id;
+                // Update the ID field in the database
+                // TODO: Ask Greg if this is necessary. I think so, but not sure
+                docRef.update({
+                    id : docRef.id
+                });
+            });
+        }
+
         DB.getInstance().collection('Learner').doc(this.id).set(
             toPlainObject(this)
         );
