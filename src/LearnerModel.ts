@@ -3,7 +3,6 @@ import {DB, toPlainObject} from "./DB";
 
 interface FirestoreSync {
     send();
-    load();
 }
 
 export class Learner implements FirestoreSync{
@@ -20,9 +19,6 @@ export class Learner implements FirestoreSync{
         DB.getInstance().collection('Learner').doc(this.id).set(
             toPlainObject(this)
         );
-    }
-    load () {
-        throw new Error("Not yet implemented");
     }
 }
 
@@ -99,9 +95,6 @@ export class LearnerKnowledgeModel implements FirestoreSync {
             toPlainObject(this)
         );
     }
-    load() {
-        throw new Error("Not yet implemented");
-    }
 }
 
 export class LearnerModel implements FirestoreSync {
@@ -135,11 +128,5 @@ export class LearnerModel implements FirestoreSync {
             "knowledgeModel" : this.knowledgeModel.id,
             //"userActionLog" : this.userActionLog
         });
-    }
-    /** Only look for changes, like in the Friendly Eats example 
-     *  Actually, this may not be necessary at all
-    */
-    load () {
-        throw new Error("Not yet implemented");
     }
 }
