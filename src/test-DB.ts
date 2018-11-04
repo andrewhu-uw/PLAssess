@@ -5,7 +5,7 @@ import { DB, toPlainObject } from "./DB"
 
 
 describe("Firestore Cloud DB", () => {
-    before(() => {
+    before((done) => {
         DB.init();
 
         // Create example data
@@ -16,7 +16,11 @@ describe("Firestore Cloud DB", () => {
         // "Hand-rolled" method, to be deprecated
         DB.getInstance().collection('LearnerModel').doc('AHu').set(
             toPlainObject(lm)
-        );
+        ).then((value) => {
+            done();
+        }).catch((reason) => {
+            done(new Error(reason));
+        })
         // Boilerplate update method
         lm.send();
         console.log(toPlainObject(lm));
