@@ -29,11 +29,11 @@ export class Learner implements FirestoreSync{
                     id : docRef.id
                 });
             });
-        }
-
-        DB.getInstance().collection('Learner').doc(this.id).set(
-            toPlainObject(this)
-        );
+        } else {
+            DB.getInstance().collection('Learner').doc(this.id).set(
+                toPlainObject(this)
+            );
+        }      
     }
 }
 
@@ -106,9 +106,24 @@ export class LearnerKnowledgeModel implements FirestoreSync {
         this.updateLog.addEntry(input);
     }
     send() {
-        DB.getInstance().collection('LearnerKnowledgeModel').doc(this.id).set(
-            toPlainObject(this)
-        );
+        // Adding a new object
+        if (this.id == null) {
+            DB.getInstance().collection('LearnerKnowledgeModel').add(
+                toPlainObject(this)
+            ).then((docRef) => {
+                // Set the local ID to the Firebase auto ID
+                this.id = docRef.id;
+                // Update the ID field in the database
+                // TODO: Ask Greg if this is necessary. I think so, but not sure
+                docRef.update({
+                    id : docRef.id
+                });
+            })
+        } else {
+            DB.getInstance().collection('LearnerKnowledgeModel').doc(this.id).set(
+                toPlainObject(this)
+            );
+        }
     }
 }
 
