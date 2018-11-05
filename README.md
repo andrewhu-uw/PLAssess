@@ -70,6 +70,10 @@ it ("Should do...", (done) => {
 })
 ```
 
+### Asynchronous Tests
+
+Probably one of the trickiest things about writing these tests is working with promises. [This article](https://wietse.loves.engineering/testing-promises-with-mocha-90df8b7d2e35) comes to a pretty good conclusion in my opinion that making the test function itself `async` and using `await` on promises is the best solution.
+
 ## Architecture
 
 ### Firebase Connection
