@@ -16,7 +16,7 @@ export class Learner implements FirestoreSync{
                 public gender: string,
                 public birthDate: string,
                 public age: number) {    }
-    send () : Promise<void | WriteResult> {
+    async send () : Promise<void | WriteResult> {
         // Adding a new object
         if (this.id == null) {
             return DB.getInstance().collection('Learner').add(
@@ -29,7 +29,6 @@ export class Learner implements FirestoreSync{
                 docRef.update({
                     id : docRef.id
                 });
-                console.log("Set Learner id to ", this.id);
             });
         } else {
             return DB.getInstance().collection('Learner').doc(this.id).set(

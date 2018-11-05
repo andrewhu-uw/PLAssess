@@ -33,7 +33,6 @@ describe("Firestore Cloud DB", () => {
 
     it ("Should load objects that are structurally equal to the data uploaded", async () => {
         // Load example data from Firebase
-        console.log("Generated ID: ", generatedID);
         var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
         learner.id = generatedID;
         var handMadeLM = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
