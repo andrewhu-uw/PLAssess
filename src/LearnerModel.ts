@@ -1,8 +1,9 @@
 import { MapID, SetID } from "./Map";
 import {DB, toPlainObject} from "./DB";
+import { WriteResult } from "@google-cloud/firestore";
 
 interface FirestoreSync {
-    send();
+    send() : Promise<any>;
 }
 
 export class Learner implements FirestoreSync{
@@ -15,7 +16,7 @@ export class Learner implements FirestoreSync{
                 public gender: string,
                 public birthDate: string,
                 public age: number) {    }
-    send () {
+    send () : Promise<void | WriteResult> {
         // Adding a new object
         if (this.id == null) {
             DB.getInstance().collection('Learner').add(
@@ -30,7 +31,7 @@ export class Learner implements FirestoreSync{
                 });
             });
         } else {
-            DB.getInstance().collection('Learner').doc(this.id).set(
+            return DB.getInstance().collection('Learner').doc(this.id).set(
                 toPlainObject(this)
             );
         }      
@@ -105,10 +106,10 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<PathSequence, Probability>());
         this.updateLog.addEntry(input);
     }
-    send() {
+    send() : Promise<void | WriteResult> {
         // Adding a new object
         if (this.id == null) {
-            DB.getInstance().collection('LearnerKnowledgeModel').add(
+            return DB.getInstance().collection('LearnerKnowledgeModel').add(
                 toPlainObject(this)
             ).then((docRef) => {
                 // Set the local ID to the Firebase auto ID
@@ -118,9 +119,10 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                 docRef.update({
                     id : docRef.id
                 });
+
             })
         } else {
-            DB.getInstance().collection('LearnerKnowledgeModel').doc(this.id).set(
+            return DB.getInstance().collection('LearnerKnowledgeModel').doc(this.id).set(
                 toPlainObject(this)
             );
         }
@@ -146,14 +148,16 @@ export class LearnerModel implements FirestoreSync {
     historicalSurveyAnswers () : MapID<SurveyQuestion, string> {
         return new MapID();
     }
-    send () {
-        this.learner.send();
-        this.knowledgeModel.send();
+    async send () : Promise<WriteResult> {
+        await this.learner.send();
+        console.log("Finished sending Learner");
+        await this.knowledgeModel.send();
+        console.log("Finished sending KM");
         // Don't do this, we want to store the Learner and LearnerKnowledgeModel in separate docs 
         // DB.getInstance().collection('LearnerModel').doc(this.learner.id).set(
         //     toPlainObject(this)
         // );
-        DB.getInstance().collection('LearnerModel').doc(this.learner.id).set({
+        return DB.getInstance().collection('LearnerModel').doc(this.learner.id).set({
             "learner" : this.learner.id,
             "knowledgeModel" : this.knowledgeModel.id,
             //"userActionLog" : this.userActionLog

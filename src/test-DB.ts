@@ -2,6 +2,7 @@ import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction } from "./Lear
 import {expect} from "chai";
 import "mocha";
 import { DB, toPlainObject } from "./DB"
+import { WriteResult } from "@google-cloud/firestore";
 
 
 describe("Firestore Cloud DB", () => {
@@ -14,15 +15,17 @@ describe("Firestore Cloud DB", () => {
 
         // Sync to Firebase
         // "Hand-rolled" method, to be deprecated
-        DB.getInstance().collection('LearnerModel').doc('AHu').set(
-            toPlainObject(lm)
-        ).then((value) => {
-            done();
-        }).catch((reason) => {
-            done(new Error(reason));
-        })
+        // DB.getInstance().collection('LearnerModel').doc('AHu').set(
+        //     toPlainObject(lm)
+        // ).then((value) => {
+        //     done();
+        // }).catch((reason) => {
+        //     done(new Error(reason));
+        // })
         // Boilerplate update method
-        lm.send();
+        lm.send().then((wr) => {
+            done();
+        })
         console.log(toPlainObject(lm));
         console.log("Type of plain LM's date:", typeof((toPlainObject(lm) as LearnerModel).learner.birthDate));
     });
