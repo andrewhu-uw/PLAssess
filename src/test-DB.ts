@@ -7,7 +7,7 @@ import { WriteResult } from "@google-cloud/firestore";
 
 describe("Firestore Cloud DB", () => {
     before(async function() {
-        this.timeout(3000);
+        this.timeout(5000);
         DB.init();
 
         // Create example data
@@ -29,9 +29,9 @@ describe("Firestore Cloud DB", () => {
         await lm.send().then((wr) => {
             assert.isOk(wr, "Write success");
         })
-        // .catch((rejectedReason) => {
-        //     assert.isNotOk(rejectedReason, "Promise rejected");
-        // });
+        .catch((rejectedReason) => {
+            assert.isNotOk(rejectedReason, "Promise rejected");
+        });
     });
 
     it ("Should load objects that are structurally equal to the data uploaded", (done) => {
