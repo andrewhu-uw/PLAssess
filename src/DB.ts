@@ -32,6 +32,12 @@ export module DB {
         });
         return new LearnerModel(learner, knowledgeModel);
     }
+
+    export async function getLearner(id : string) : Promise<Learner> {
+        return db.collection('Learner').doc(id).get().then((docRef) => {
+            return docRef.data() as Learner;
+        });
+    }
 }
 
 export function toPlainObject(o : Object): Object {
