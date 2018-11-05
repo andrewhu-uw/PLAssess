@@ -1,12 +1,13 @@
 import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction } from "./LearnerModel"
-import {expect} from "chai";
+import {expect, assert} from "chai";
 import "mocha";
 import { DB, toPlainObject } from "./DB"
 import { WriteResult } from "@google-cloud/firestore";
 
 
 describe("Firestore Cloud DB", () => {
-    before((done) => {
+    before(async function() {
+        this.timeout(3000);
         DB.init();
 
         // Create example data
@@ -23,11 +24,14 @@ describe("Firestore Cloud DB", () => {
         //     done(new Error(reason));
         // })
         // Boilerplate update method
-        lm.send().then((wr) => {
-            done();
-        })
         console.log(toPlainObject(lm));
         console.log("Type of plain LM's date:", typeof((toPlainObject(lm) as LearnerModel).learner.birthDate));
+        await lm.send().then((wr) => {
+            assert.isOk(wr, "Write success");
+        })
+        .catch((rejectedReason) => {
+            assert.isNotOk(rejectedReason, "Promise rejected");
+        });
     });
 
     it ("Should load objects that are structurally equal to the data uploaded", (done) => {
