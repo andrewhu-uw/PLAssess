@@ -19,7 +19,7 @@ export class Learner implements FirestoreSync{
     send () : Promise<void | WriteResult> {
         // Adding a new object
         if (this.id == null) {
-            DB.getInstance().collection('Learner').add(
+            return DB.getInstance().collection('Learner').add(
                 toPlainObject(this)
             ).then((docRef) => {
                 // Set the local ID to the Firebase auto ID
@@ -29,6 +29,7 @@ export class Learner implements FirestoreSync{
                 docRef.update({
                     id : docRef.id
                 });
+                console.log("Set Learner id to ", this.id);
             });
         } else {
             return DB.getInstance().collection('Learner').doc(this.id).set(
@@ -157,6 +158,7 @@ export class LearnerModel implements FirestoreSync {
         // DB.getInstance().collection('LearnerModel').doc(this.learner.id).set(
         //     toPlainObject(this)
         // );
+        console.log("Learner id: ", this.learner.id);
         return DB.getInstance().collection('LearnerModel').doc(this.learner.id).set({
             "learner" : this.learner.id,
             "knowledgeModel" : this.knowledgeModel.id,

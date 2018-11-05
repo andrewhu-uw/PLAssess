@@ -29,9 +29,9 @@ describe("Firestore Cloud DB", () => {
         await lm.send().then((wr) => {
             assert.isOk(wr, "Write success");
         })
-        .catch((rejectedReason) => {
-            assert.isNotOk(rejectedReason, "Promise rejected");
-        });
+        // .catch((rejectedReason) => {
+        //     assert.isNotOk(rejectedReason, "Promise rejected");
+        // });
     });
 
     it ("Should load objects that are structurally equal to the data uploaded", (done) => {
