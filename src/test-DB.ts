@@ -6,7 +6,7 @@ import { WriteResult } from "@google-cloud/firestore";
 
 
 describe("Firestore Cloud DB", () => {
-    before(async function() {
+    before(async () => {
         this.timeout(5000);
         DB.init();
 
@@ -15,17 +15,7 @@ describe("Firestore Cloud DB", () => {
         var lm = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
 
         // Sync to Firebase
-        // "Hand-rolled" method, to be deprecated
-        // DB.getInstance().collection('LearnerModel').doc('AHu').set(
-        //     toPlainObject(lm)
-        // ).then((value) => {
-        //     done();
-        // }).catch((reason) => {
-        //     done(new Error(reason));
-        // })
-        // Boilerplate update method
-        console.log(toPlainObject(lm));
-        console.log("Type of plain LM's date:", typeof((toPlainObject(lm) as LearnerModel).learner.birthDate));
+        // Interface update method
         await lm.send().then((wr) => {
             assert.isOk(wr, "Write success");
         })
@@ -42,7 +32,6 @@ describe("Firestore Cloud DB", () => {
         DB.getInstance().collection('LearnerModel').doc('AHu').get().then((doc) => {
             var lm : LearnerModel = doc.data() as LearnerModel;
             expect(lm).to.deep.equal(handMadeLM);
-            console.log("Received: ", typeof(lm.learner.birthDate), typeof(handMadeLM.learner.birthDate));
             done();
         })
         .catch((err) => {
