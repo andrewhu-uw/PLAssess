@@ -17,17 +17,17 @@ export module DB {
         db = admin.firestore();
         db.settings({timestampesInSnapshots: true});
     }
-    export function getLearnerModel(id: string) : LearnerModel {
+    export async function getLearnerModel(id: string) : Promise<LearnerModel> {
         var lmRef = null;
-        db.collection('LearnerModel').doc(id).get().then((doc) => {
+        await db.collection('LearnerModel').doc(id).get().then((doc) => {
             lmRef = doc.data();
         });
         var learner : Learner;
         var knowledgeModel : LearnerKnowledgeModel;
-        db.collection('Learner').doc(lmRef.learner).get().then((doc) => {
+        await db.collection('Learner').doc(lmRef.learner).get().then((doc) => {
             learner = doc.data() as Learner;
         });
-        db.collection('LearnerKnowledgeModel').doc(lmRef.knowledgeModel).get().then((doc) => {
+        await db.collection('LearnerKnowledgeModel').doc(lmRef.knowledgeModel).get().then((doc) => {
             knowledgeModel = doc.data() as LearnerKnowledgeModel;
         });
         return new LearnerModel(learner, knowledgeModel);
