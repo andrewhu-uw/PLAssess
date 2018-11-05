@@ -74,6 +74,8 @@ it ("Should do...", (done) => {
 
 Probably one of the trickiest things about writing these tests is working with promises. [This article](https://wietse.loves.engineering/testing-promises-with-mocha-90df8b7d2e35) comes to a pretty good conclusion in my opinion that making the test function itself `async` and using `await` on promises is the best solution.
 
+I am very new to Promises and asynchronous IO in general, and I found [this article](https://blog.domenic.me/youre-missing-the-point-of-promises/) to be very helpful
+
 ## Architecture
 
 ### Firebase Connection

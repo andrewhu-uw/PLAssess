@@ -1,7 +1,13 @@
 import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction } from "./LearnerModel"
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
-import { Firestore } from "@google-cloud/firestore";
+import { Firestore, DocumentSnapshot } from "@google-cloud/firestore";
+
+interface LearnerModelRef {
+    learner : string;
+    knowledgeModel : string;
+    // IDs of the learner and LKM
+}
 
 export module DB {
     var serviceAccount = require("../priv/firestore-private-key.json");
@@ -9,6 +15,7 @@ export module DB {
     export function getInstance(): Firestore {
         return db;
     }
+
     export function init() {
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
@@ -17,25 +24,25 @@ export module DB {
         db = admin.firestore();
         db.settings({timestampesInSnapshots: true});
     }
+
     export async function getLearnerModel(id: string) : Promise<LearnerModel> {
-        var lmRef = null;
-        await db.collection('LearnerModel').doc(id).get().then((doc) => {
-            lmRef = doc.data();
+        var lmRef : LearnerModelRef = await db.collection('LearnerModel').doc(id).get().then((doc) => {
+            return doc.data() as LearnerModelRef;
         });
-        var learner : Learner;
-        var knowledgeModel : LearnerKnowledgeModel;
-        await db.collection('Learner').doc(lmRef.learner).get().then((doc) => {
-            learner = doc.data() as Learner;
-        });
-        await db.collection('LearnerKnowledgeModel').doc(lmRef.knowledgeModel).get().then((doc) => {
-            knowledgeModel = doc.data() as LearnerKnowledgeModel;
-        });
+        var learner : Learner = await getLearner(lmRef.learner);
+        var knowledgeModel : LearnerKnowledgeModel = await getLearnerKnowledgeModel(lmRef.knowledgeModel);
         return new LearnerModel(learner, knowledgeModel);
     }
 
     export async function getLearner(id : string) : Promise<Learner> {
-        return db.collection('Learner').doc(id).get().then((docRef) => {
-            return docRef.data() as Learner;
+        return db.collection('Learner').doc(id).get().then((snap) => {
+            return snap.data() as Learner;
+        });
+    }
+
+    export async function getLearnerKnowledgeModel(id : string) : Promise<LearnerKnowledgeModel> {
+        return db.collection('LeanerKnowledgeModel').doc(id).get().then((snap) => {
+            return snap.data() as LearnerKnowledgeModel;
         });
     }
 }
