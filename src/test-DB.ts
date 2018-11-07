@@ -37,9 +37,15 @@ describe("Firestore Cloud DB", () => {
 
         await lm.send();
         expect(lm.learner.id).to.not.equal(null);
+    });
+
+    it ("Should load LKM with just ID", async () => {
+        var handMadeLKM = new LearnerKnowledgeModel("hello");
+        var loadedLKM : LearnerKnowledgeModel = await DB.getLearnerKnowledgeModel("hello");
+        expect(loadedLKM).to.deep.equal(handMadeLKM);
     })
 
-    it ("Should load objects that are structurally equal to the data uploaded", async () => {
+    it ("Should load LM that are structurally equal to the data uploaded", async () => {
         // Load example data from Firebase
         var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
         learner.id = generatedID;
@@ -49,7 +55,7 @@ describe("Firestore Cloud DB", () => {
         expect(loadedLM).to.deep.equal(handMadeLM);
     });
 
-    it ("Should not deep equal objects that do not have an ID", async () => {
+    it ("Should not deep equal LM that do not have an ID", async () => {
         var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
         //learner.id = generatedID;
         //^^ Forget id in handmade version

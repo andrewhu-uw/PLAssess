@@ -44,7 +44,7 @@ export module DB {
     }
 
     export async function getLearnerKnowledgeModel(id : string) : Promise<LearnerKnowledgeModel> {
-        return db.collection('LeanerKnowledgeModel').doc(id).get().then((snap) => {
+        return db.collection('LearnerKnowledgeModel').doc(id).get().then((snap) => {
             return snap.data() as LearnerKnowledgeModel;
         });
     }
