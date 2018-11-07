@@ -63,8 +63,4 @@ describe("Firestore Cloud DB", () => {
         var loadedLM = await DB.getLearnerModel(generatedID);
         expect(loadedLM).to.not.deep.equal(handMadeLM);
     });
-
-    it ("Should properly save and load multi-row data structures", async () => {
-
-    });
 })

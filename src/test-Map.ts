@@ -116,7 +116,7 @@ describe("Map Firestore", () => {
 
     it ("Should store LKM properly", async () => {
         var loadedLKM : LearnerKnowledgeModel = await DB.getLearnerKnowledgeModel('containsMultiPair');
-        expect(loadedLKM.byPath.get(new Path("hello"))).to.equal(new Probability("99%"));
+        expect(loadedLKM.byPath["hello"]).to.deep.equal(new Probability("99%"));
         expect(loadedLKM).to.deep.equal(lkm);
     });
 });
