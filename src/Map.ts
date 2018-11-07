@@ -1,3 +1,7 @@
+import { FirestoreSync } from "./LearnerModel"
+import {DB, toPlainObject} from "./DB";
+import { WriteResult } from "@google-cloud/firestore";
+
 interface HasID {
     id: string;
 }
@@ -17,5 +21,14 @@ export class SetID<K extends HasID> {
     }
     remove(entry: K) {
         this[entry.id] = {};
+    }
+}
+
+export class MapWrapper<K extends HasID, V> implements FirestoreSync {
+    constructor(public map : MapID<K,V>, public id: string){}
+    send() : Promise<WriteResult>{
+        return DB.getInstance().collection('MapWrapper').doc(this.id).set(
+            toPlainObject(this)
+        );
     }
 }

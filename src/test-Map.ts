@@ -1,7 +1,8 @@
 import {expect} from "chai";
 import "mocha";
-import { MapID } from "./Map";
+import { MapID, MapWrapper } from "./Map";
 import { Path, Probability } from "./LearnerModel";
+import { DB } from "./DB";
 
 describe("MapID", () => {
     it("Should be an empty object on construction (without types)", () => {
@@ -58,5 +59,29 @@ describe("MapID", () => {
         onePair.set(pathKey, probValue);
 
         expect(onePair).to.deep.equal({"abfd":{"prob":"42%"}});
+    })
+});
+
+describe("Map Firestore", () => {
+    var onePair : MapID<Path, Probability> = new MapID();
+
+    before(function() {
+        DB.init();
+    });
+    before(function() {
+        var pathKey = new Path("abfd");
+        var probValue = new Probability("42%");
+        onePair.set(pathKey, probValue);
+        
+        var wrapper = new MapWrapper(onePair, "onePair");
+        wrapper.send();
+    });
+
+    it ("Should represent the unwrapped Map correctly", async () => {
+        var loadedMap : MapID<Path, Probability> = 
+        await DB.getInstance().collection('MapWrapper').doc('onePair').get().then((snap) => {
+            return snap.data().map as MapID<Path, Probability>;
+        });
+        expect(loadedMap).to.deep.equal(onePair);
     })
 });

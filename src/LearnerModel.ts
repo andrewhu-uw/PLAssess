@@ -2,7 +2,7 @@ import { MapID, SetID } from "./Map";
 import {DB, toPlainObject} from "./DB";
 import { WriteResult } from "@google-cloud/firestore";
 
-interface FirestoreSync {
+export interface FirestoreSync {
     send() : Promise<any>;
 }
 
