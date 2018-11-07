@@ -24,7 +24,7 @@ export module DB {
             databaseURL: "https://plasses-d4707.firebaseio.com"
         });
         db = admin.firestore();
-        db.settings({timestampesInSnapshots: true});
+        db.settings({timestampsInSnapshots: true});
         inited = true;
     }
 
