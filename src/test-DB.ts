@@ -1,7 +1,7 @@
 import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction } from "./LearnerModel"
 import {expect, assert} from "chai";
 import "mocha";
-import { DB, toPlainObject } from "./DB"
+import { DB } from "./DB"
 import { WriteResult } from "@google-cloud/firestore";
 
 
@@ -30,6 +30,14 @@ describe("Firestore Cloud DB", () => {
         });
         generatedID = lm.learner.id;
     });
+
+    it ("Should generate an ID after first send", async () => {
+        var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
+        var lm = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
+
+        await lm.send();
+        expect(lm.learner.id).to.not.equal(null);
+    })
 
     it ("Should load objects that are structurally equal to the data uploaded", async () => {
         // Load example data from Firebase

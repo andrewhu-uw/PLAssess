@@ -12,17 +12,20 @@ interface LearnerModelRef {
 export module DB {
     var serviceAccount = require("../priv/firestore-private-key.json");
     var db : Firestore;
+    var inited : boolean = false;
     export function getInstance(): Firestore {
         return db;
     }
 
     export function init() {
+        if (inited) return;
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
             databaseURL: "https://plasses-d4707.firebaseio.com"
         });
         db = admin.firestore();
         db.settings({timestampesInSnapshots: true});
+        inited = true;
     }
 
     export async function getLearnerModel(id: string) : Promise<LearnerModel> {
