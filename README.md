@@ -44,6 +44,11 @@ npm install -g mocha chai
 
 With VS Code you should be able to run the task `test`.
 
+#### When Tests Fail
+
+Be careful about counting which tests fail. If a beforeAll hook fails, it doesn't run the entire suite, so it only
+looks like one test failed, when the entire suite failed.
+
 ### Writing Tests
 
 You can look at the Mocha and Chai documentation, but there are a couple tricky things to remember.
