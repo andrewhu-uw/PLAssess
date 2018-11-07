@@ -64,6 +64,7 @@ describe("MapID", () => {
 
 describe("Map Firestore", () => {
     var onePair : MapID<Path, Probability> = new MapID();
+    var multiPair : MapID<Path, Probability> = new MapID();
 
     before(function() {
         DB.init();
@@ -76,12 +77,33 @@ describe("Map Firestore", () => {
         var wrapper = new MapWrapper(onePair, "onePair");
         wrapper.send();
     });
+    before(function() {
+        var pathKey = new Path("abfd");
+        var probValue = new Probability("42%");
+        multiPair.set(pathKey, probValue);
+        pathKey = new Path("hello");
+        probValue = new Probability("99%");
+        multiPair.set(pathKey, probValue);
+        pathKey = new Path("world");
+        probValue = new Probability("100%");
+        multiPair.set(pathKey, probValue);
 
-    it ("Should represent the unwrapped Map correctly", async () => {
+        new MapWrapper(multiPair, "multiPair").send();
+    })
+
+    it ("One pair", async () => {
         var loadedMap : MapID<Path, Probability> = 
         await DB.getInstance().collection('MapWrapper').doc('onePair').get().then((snap) => {
             return snap.data().map as MapID<Path, Probability>;
         });
         expect(loadedMap).to.deep.equal(onePair);
+    });
+
+    it ("Multiple pairs", async () => {
+        var loadedMap : MapID<Path, Probability> = 
+        await DB.getInstance().collection('MapWrapper').doc('multiPair').get().then((snap) => {
+            return snap.data().map as MapID<Path, Probability>;
+        });
+        expect(loadedMap).to.deep.equal(multiPair);
     })
 });
