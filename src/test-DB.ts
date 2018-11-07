@@ -1,4 +1,4 @@
-import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction } from "./LearnerModel"
+import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction, Path } from "./LearnerModel"
 import {expect, assert} from "chai";
 import "mocha";
 import { DB } from "./DB"
@@ -20,8 +20,7 @@ describe("Firestore Cloud DB", () => {
         var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
         var lm = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
 
-        // Sync to Firebase
-        // Interface update method
+        // Sync to Firebase, and fail the suite if unsuccessful
         await lm.send().then((wr) => {
             assert.isOk(wr, "Write success");
         })
@@ -63,5 +62,9 @@ describe("Firestore Cloud DB", () => {
 
         var loadedLM = await DB.getLearnerModel(generatedID);
         expect(loadedLM).to.not.deep.equal(handMadeLM);
+    });
+
+    it ("Should properly save and load multi-row data structures", async () => {
+
     });
 })

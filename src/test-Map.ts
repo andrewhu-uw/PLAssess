@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import "mocha";
 import { MapID, MapWrapper } from "./Map";
-import { Path, Probability } from "./LearnerModel";
+import { Path, Probability, LearnerKnowledgeModel, Learner, createLearnerKnowledgeModel } from "./LearnerModel";
 import { DB } from "./DB";
 
 describe("MapID", () => {
@@ -65,19 +65,20 @@ describe("MapID", () => {
 describe("Map Firestore", () => {
     var onePair : MapID<Path, Probability> = new MapID();
     var multiPair : MapID<Path, Probability> = new MapID();
+    var lkm : LearnerKnowledgeModel;
 
-    before(function() {
+    before (function() {
         DB.init();
     });
-    before(function() {
+    before (async function() {
         var pathKey = new Path("abfd");
         var probValue = new Probability("42%");
         onePair.set(pathKey, probValue);
         
         var wrapper = new MapWrapper(onePair, "onePair");
-        wrapper.send();
+        await wrapper.send();
     });
-    before(function() {
+    before (async function() {
         var pathKey = new Path("abfd");
         var probValue = new Probability("42%");
         multiPair.set(pathKey, probValue);
@@ -88,7 +89,13 @@ describe("Map Firestore", () => {
         probValue = new Probability("100%");
         multiPair.set(pathKey, probValue);
 
-        new MapWrapper(multiPair, "multiPair").send();
+        await new MapWrapper(multiPair, "multiPair").send();
+    });
+    before (async function() {
+        // Create and send a LKM that contains a Map with multiple pairs
+        lkm = createLearnerKnowledgeModel(multiPair);
+        lkm.id = "containsMultiPair";
+        await lkm.send();
     })
 
     it ("One pair", async () => {
@@ -105,5 +112,11 @@ describe("Map Firestore", () => {
             return snap.data().map as MapID<Path, Probability>;
         });
         expect(loadedMap).to.deep.equal(multiPair);
-    })
+    });
+
+    it ("Should store LKM properly", async () => {
+        var loadedLKM : LearnerKnowledgeModel = await DB.getLearnerKnowledgeModel('containsMultiPair');
+        expect(loadedLKM.byPath.get(new Path("hello"))).to.equal(new Probability("99%"));
+        expect(loadedLKM).to.deep.equal(lkm);
+    });
 });

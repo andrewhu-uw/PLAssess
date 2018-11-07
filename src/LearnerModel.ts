@@ -83,6 +83,12 @@ class KMUpdateLog {
     }
 }
 
+export function createLearnerKnowledgeModel(_byPath : MapID<Path, Probability>): LearnerKnowledgeModel {
+    var temp = new LearnerKnowledgeModel(null);
+    temp.byPath = _byPath;
+    return temp;
+}
+
 export class LearnerKnowledgeModel implements FirestoreSync {
     id : string;
     byPath : MapID<Path, Probability>;
@@ -93,6 +99,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     constructor(_id : string) {
         this.id = _id;
     }
+    
     getPath () : MapID<Path, Probability> { return this.byPath; }
     getPathSequences() : MapID<PathSequence, Probability> { return this.byPathSequences; }
     setPathPrior(p: Path, prob: Probability) { this.pathPrior.set(p, prob); }
