@@ -157,14 +157,7 @@ export class LearnerModel implements FirestoreSync {
     }
     async send () : Promise<WriteResult> {
         await this.learner.send();
-        console.log("Finished sending Learner");
         await this.knowledgeModel.send();
-        console.log("Finished sending KM");
-        // Don't do this, we want to store the Learner and LearnerKnowledgeModel in separate docs 
-        // DB.getInstance().collection('LearnerModel').doc(this.learner.id).set(
-        //     toPlainObject(this)
-        // );
-        console.log("Learner id: ", this.learner.id);
         return DB.getInstance().collection('LearnerModel').doc(this.learner.id).set({
             "learner" : this.learner.id,
             "knowledgeModel" : this.knowledgeModel.id,
