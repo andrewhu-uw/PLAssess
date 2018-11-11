@@ -38,7 +38,10 @@ describe("Firestore Cloud DB", () => {
         expect(lm.learner.id).to.not.equal(null);
     });
 
+    // should not change the id after second send
+
     it ("Should load LKM with just ID", async () => {
+        // hello id created manually for testing via firebase 
         var handMadeLKM = new LearnerKnowledgeModel("hello");
         var loadedLKM : LearnerKnowledgeModel = await DB.getLearnerKnowledgeModel("hello");
         expect(loadedLKM).to.deep.equal(handMadeLKM);
@@ -63,4 +66,16 @@ describe("Firestore Cloud DB", () => {
         var loadedLM = await DB.getLearnerModel(generatedID);
         expect(loadedLM).to.not.deep.equal(handMadeLM);
     });
+
+    // test lkm with multiple entries works
+
+    // create lkm
+    // save it
+    // call update several times on LKM (first once, then check it worked, then multiple, then check works again
+    
+    // this is an example of test for "how to use these classes in the application"
+    // they may also surface api usability issues (like ugh this is a  little ugly)
+    // we can talk about those on slack or at next meeting depending on severity
+    
+    // more tests that depend on Map (like for LKM) are in test-Map.ts at bottom
 })

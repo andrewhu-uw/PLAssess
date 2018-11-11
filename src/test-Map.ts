@@ -62,7 +62,8 @@ describe("MapID", () => {
     })
 });
 
-describe("Map Firestore", () => {
+describe("Map works with Firestore", () => {
+    // pair , better as entry 
     var onePair : MapID<Path, Probability> = new MapID();
     var multiPair : MapID<Path, Probability> = new MapID();
     var lkm : LearnerKnowledgeModel;
@@ -99,10 +100,10 @@ describe("Map Firestore", () => {
     })
 
     it ("One pair", async () => {
-        var loadedMap : MapID<Path, Probability> = 
-        await DB.getInstance().collection('MapWrapper').doc('onePair').get().then((snap) => {
-            return snap.data().map as MapID<Path, Probability>;
-        });
+        var loadedMap : MapID<Path, Probability> =  await DB.getInstance()
+            .collection('MapWrapper').doc('onePair').get().then((snap) => {
+                return snap.data().map as MapID<Path, Probability>;
+            });
         expect(loadedMap).to.deep.equal(onePair);
     });
 
