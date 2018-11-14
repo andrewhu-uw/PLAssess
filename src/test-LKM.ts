@@ -42,4 +42,6 @@ describe("LKM works with Firestore", () => {
         expect(loadedLKM.byPath["hello"]).to.deep.equal({ prob: "99%"});
         expect(loadedLKM).to.deep.equal(originalLKM);
     });
+
+    
 })

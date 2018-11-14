@@ -41,11 +41,13 @@ export class Path { constructor(public id: string) {} }
 export class PathSequence { id : string; seq : Path[]; }
 export class Probability { constructor(public prob: string) {} }
 export class UserAction { constructor(public id : string){} }
-export class SurveyQuestion {
-    // TODO: should this just be the question as a string or an id?
-    id : string;
+export class SurveyQuestion { constructor(public id : string){}}
+export class LearnerResponse {  // LearnerResponse's id is the question
+    id : string
+    constructor(q : SurveyQuestion, public response: string) {
+        this.id = q.id;
+    }
 }
-export class LearnerResponse {constructor(public q: SurveyQuestion, public id: string) {}}
 
 export class LearnerModel implements FirestoreSync {
     userActionLog : SetID<UserAction>;

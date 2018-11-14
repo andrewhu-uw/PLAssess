@@ -18,6 +18,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     updateLog: SetID<KMUpdateRow>;
     constructor(_id : string) {
         this.id = _id;
+        this.updateLog = new SetID();
     }
     
     getPath () : MapID<Path, Probability> { return this.byPath; }
