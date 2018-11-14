@@ -91,12 +91,6 @@ describe("Map works with Firestore", () => {
 
         await new MapWrapper(multiEntry, "multiEntry").send();
     });
-    before (async function() {
-        // Create and send a LKM that contains a Map with multiple entrys
-        lkm = createLearnerKnowledgeModel(multiEntry);
-        lkm.id = "containsMultiEntry";
-        await lkm.send();
-    })
 
     it ("One entry", async () => {
         var loadedMap : MapID<Path, Probability> =  await DB.getInstance()
@@ -112,11 +106,5 @@ describe("Map works with Firestore", () => {
             return snap.data().map as MapID<Path, Probability>;
         });
         expect(loadedMap).to.deep.equal(multiEntry);
-    });
-
-    it ("Should store LKM properly", async () => {
-        var loadedLKM : LearnerKnowledgeModel = await DB.getLearnerKnowledgeModel('containsMultiEntry');
-        expect(loadedLKM.byPath["hello"]).to.deep.equal(new Probability("99%"));
-        expect(loadedLKM).to.deep.equal(lkm);
     });
 });

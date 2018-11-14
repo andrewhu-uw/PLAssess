@@ -12,6 +12,7 @@ describe("Firestore Cloud DB", () => {
         DB.init();
     });
 
+    // Done before to verify that we can even write to Firestore
     // Must use function() syntax because of this.timeout
     before(async function () {
         this.timeout(5000);
@@ -36,6 +37,7 @@ describe("Firestore Cloud DB", () => {
 
         await lm.send();
         expect(lm.learner.id).to.not.equal(null);
+        expect(typeof(lm.learner.id)).to.equal("string");
     });
 
     // should not change the id after second send
@@ -62,6 +64,7 @@ describe("Firestore Cloud DB", () => {
         //learner.id = generatedID;
         //^^ Forget id in handmade version
         var handMadeLM = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
+        expect(typeof(handMadeLM.learner.id)).to.equal("undefined");
 
         var loadedLM = await DB.getLearnerModel(generatedID);
         expect(loadedLM).to.not.deep.equal(handMadeLM);
