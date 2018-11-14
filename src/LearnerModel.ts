@@ -44,7 +44,7 @@ export class UserAction { constructor(public id : string){} }
 export class SurveyQuestion { constructor(public id : string){}}
 export class LearnerResponse {  // LearnerResponse's id is the question
     id : string
-    constructor(q : SurveyQuestion, public response: string) {
+    constructor(q : SurveyQuestion, public answer: string) {
         this.id = q.id;
     }
 }
