@@ -1,5 +1,4 @@
-import { FirestoreSync } from "./LearnerModel"
-import {DB, toPlainObject} from "./DB";
+import {DB, toPlainObject, FirestoreSync} from "./DB";
 import { WriteResult } from "@google-cloud/firestore";
 
 interface HasID {

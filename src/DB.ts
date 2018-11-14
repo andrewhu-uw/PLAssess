@@ -1,7 +1,12 @@
-import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction } from "./LearnerModel"
+import { Learner, LearnerModel, UserAction } from "./LearnerModel"
+import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { Firestore, DocumentSnapshot } from "@google-cloud/firestore";
+
+export interface FirestoreSync {
+    send() : Promise<any>;
+}
 
 interface LearnerModelRef {
     learner : string;

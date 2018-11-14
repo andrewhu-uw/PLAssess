@@ -1,9 +1,10 @@
-import { Learner, LearnerKnowledgeModel, LearnerModel, UserAction, 
-    Path, Probability, createLearnerKnowledgeModel } from "./LearnerModel"
+import { Learner, LearnerModel, UserAction, 
+    Path, Probability, } from "./LearnerModel"
 import { MapID } from "./Map";
 import {expect, assert} from "chai";
 import "mocha";
 import { DB } from "./DB"
+import {LearnerKnowledgeModel, createLearnerKnowledgeModel} from "./LearnerKnowledgeModel"
 
 describe("LKM works with Firestore", () => {
     before(function () {
@@ -38,6 +39,7 @@ describe("LKM works with Firestore", () => {
         var originalLKM = makeExampleLKM();
         var loadedLKM : LearnerKnowledgeModel = await DB.getLearnerKnowledgeModel('containsMultiEntry');
         expect(loadedLKM.byPath["hello"]).to.deep.equal(new Probability("99%"));
+        expect(loadedLKM.byPath["hello"]).to.deep.equal({ prob: "99%"});
         expect(loadedLKM).to.deep.equal(originalLKM);
     });
 })

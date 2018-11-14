@@ -1,4 +1,5 @@
-import { Learner, LearnerKnowledgeModel, LearnerModel } from "./LearnerModel"
+import { Learner, LearnerModel } from "./LearnerModel"
+import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel"
 import { expect } from "chai";
 import "mocha";
 import { DB } from "./DB";

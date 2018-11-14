@@ -1,7 +1,8 @@
 import {expect} from "chai";
 import "mocha";
 import { MapID, MapWrapper } from "./Map";
-import { Path, Probability, LearnerKnowledgeModel, Learner, createLearnerKnowledgeModel } from "./LearnerModel";
+import { Path, Probability, Learner } from "./LearnerModel";
+import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel"
 import { DB } from "./DB";
 
 describe("MapID", () => {
