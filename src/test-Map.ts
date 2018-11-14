@@ -33,14 +33,14 @@ describe("MapID", () => {
         var probOne = new Probability("42%");
         var probTwo = new Probability("100%");
 
-        var overwritePair = new MapID<Path, Probability>();
-        overwritePair.set(pathKey, probOne);
-        overwritePair.set(pathKey, probTwo);
+        var overwriteEntry = new MapID<Path, Probability>();
+        overwriteEntry.set(pathKey, probOne);
+        overwriteEntry.set(pathKey, probTwo);
 
         var handMade = new MapID<Path, Probability>();
         var handMadeProbability = new Probability("100%");
         handMade["abfd"] = handMadeProbability;
-        expect(overwritePair).to.deep.equal(handMade);
+        expect(overwriteEntry).to.deep.equal(handMade);
     });
     it("Should not structurally equal different maps", () => {
         var pathKey = new Path("abfd");
@@ -63,7 +63,6 @@ describe("MapID", () => {
 });
 
 describe("Map works with Firestore", () => {
-    // pair , better as entry 
     var oneEntry : MapID<Path, Probability> = new MapID();
     var multiEntry : MapID<Path, Probability> = new MapID();
     var lkm : LearnerKnowledgeModel;
@@ -93,7 +92,7 @@ describe("Map works with Firestore", () => {
         await new MapWrapper(multiEntry, "multiEntry").send();
     });
     before (async function() {
-        // Create and send a LKM that contains a Map with multiple pairs
+        // Create and send a LKM that contains a Map with multiple entrys
         lkm = createLearnerKnowledgeModel(multiEntry);
         lkm.id = "containsMultiEntry";
         await lkm.send();
@@ -107,7 +106,7 @@ describe("Map works with Firestore", () => {
         expect(loadedMap).to.deep.equal(oneEntry);
     });
 
-    it ("Multiple pairs", async () => {
+    it ("Multiple entries", async () => {
         var loadedMap : MapID<Path, Probability> = 
         await DB.getInstance().collection('MapWrapper').doc('multiEntry').get().then((snap) => {
             return snap.data().map as MapID<Path, Probability>;
