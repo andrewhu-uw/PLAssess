@@ -1,4 +1,4 @@
-import { Learner, LearnerModel, UserAction, LearnerResponse, SurveyQuestion,
+import { Learner, LearnerModel, UserAction, LearnerResponse, Prompt,
     Path, Probability, } from "./LearnerModel"
 import { MapID } from "./Map";
 import {expect, assert} from "chai";
@@ -52,11 +52,11 @@ describe("LKM works with Firestore", () => {
         var multiEntry = makeExampleMap();
         var lkm = createLearnerKnowledgeModel(multiEntry);
 
-        lkm.update(new LearnerResponse(new SurveyQuestion("Do you know code?"), "yes"));
+        lkm.update(new LearnerResponse(new Prompt("1 + 2"), "3"));
         expect(lkm.updateLog).to.exist;
-        expect(lkm.updateLog["Do you know code?"].response).to.deep.equal({
-            id: "Do you know code?",
-            answer: "yes"
+        expect(lkm.updateLog["1 + 2"].response).to.deep.equal({
+            id: "1 + 2",
+            answer: "3"
         });
     })
 })

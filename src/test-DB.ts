@@ -29,6 +29,9 @@ describe("Firestore Cloud DB", () => {
             assert.isNotOk(rejectedReason, "Promise rejected");
         });
         generatedID = lm.learner.id;
+
+        var lkm = new LearnerKnowledgeModel("hello");
+        lkm.send();
     });
 
     it ("Should generate an ID after first send", async () => {

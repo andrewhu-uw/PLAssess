@@ -1,7 +1,7 @@
 import "mocha"
 import { expect } from "chai"
 import { MapID } from "./Map";
-import { Path, Probability, LearnerResponse, SurveyQuestion } from "./LearnerModel";
+import { Path, Probability, LearnerResponse, Prompt } from "./LearnerModel";
 import { DB } from "./DB";
 import { createLearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 
@@ -48,34 +48,33 @@ describe("LKM Integration tests", () => {
         expect(typeof(lkm.id)).to.equal("string");
 
         // Add one update and verify it
-        lkm.update(new LearnerResponse(new SurveyQuestion("Do you know code?"), "yes"));
+        lkm.update(new LearnerResponse(new Prompt("1 + 2"), "3"));
         expect(lkm.updateLog).to.exist;
-        expect(lkm.updateLog["Do you know code?"].response).to.deep.equal({
-            id: "Do you know code?",
-            answer: "yes"
+        expect(lkm.updateLog["1 + 2"].response).to.deep.equal({
+            id: "1 + 2",
+            answer: "3"
         });
 
         // send() and check that it didn't change
         await lkm.send();
-        expect(lkm.updateLog["Do you know code?"].response).to.deep.equal({
-            id: "Do you know code?",
-            answer: "yes"
+        expect(lkm.updateLog["1 + 2"].response).to.deep.equal({
+            id: "1 + 2",
+            answer: "3"
         });
         
         // Add some more responses and verify them
-        lkm.update(new LearnerResponse(new SurveyQuestion("How well do you know code?"), "pretty well"));
-        lkm.update(new LearnerResponse(new SurveyQuestion("How good are you at code?"), "okay, I guess"));
-        lkm.update(new LearnerResponse(new SurveyQuestion("How long have you been coding?"), "a few years now"));
-        expect(lkm.updateLog["How well do you know code?"].response).to.deep.equal({
-            id: "How well do you know code?",
-            answer: "pretty well"
+        lkm.update(new LearnerResponse(new Prompt("-1 + 2"), "1"));
+        lkm.update(new LearnerResponse(new Prompt("x++"), "x += 1"));
+        expect(lkm.updateLog["-1 + 2"].response).to.deep.equal({
+            id: "-1 + 2",
+            answer: "1"
         });
 
         // send() lkm and verify that it didn't change
         await lkm.send();
-        expect(lkm.updateLog["How good are you at code?"].response).to.deep.equal({
-            id: "How good are you at code?",
-            answer: "okay, I guess"
+        expect(lkm.updateLog["x++"].response).to.deep.equal({
+            id: "x++",
+            answer: "x += 1"
         });
     })
 })

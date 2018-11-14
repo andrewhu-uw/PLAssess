@@ -41,10 +41,10 @@ export class Path { constructor(public id: string) {} }
 export class PathSequence { id : string; seq : Path[]; }
 export class Probability { constructor(public prob: string) {} }
 export class UserAction { constructor(public id : string){} }
-export class SurveyQuestion { constructor(public id : string){}}
+export class Prompt { constructor(public id : string){}}
 export class LearnerResponse {  // LearnerResponse's id is the question
     id : string
-    constructor(q : SurveyQuestion, public answer: string) {
+    constructor(q : Prompt, public answer: string) {
         this.id = q.id;
     }
 }
@@ -64,10 +64,10 @@ export class LearnerModel implements FirestoreSync {
     /** What are all of the current answers to all of the questions
      * TODO: clarify are the keys here all of the questions total, or those asked so far?
      */
-    latestSurveyAnswers () : MapID<SurveyQuestion, string> {
+    latestSurveyAnswers () : MapID<Prompt, string> {
         return new MapID();
     }
-    historicalSurveyAnswers () : MapID<SurveyQuestion, string> {
+    historicalSurveyAnswers () : MapID<Prompt, string> {
         return new MapID();
     }
     async send () : Promise<WriteResult> {
