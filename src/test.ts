@@ -22,7 +22,8 @@ describe("LearnerModel Schema", () => {
             },
             "knowledgeModel": {
                 "id": "fdsf"
-            }
+            },
+            "userActionLog": {}
         } as LearnerModel;
 
         expect(lm).to.deep.equal(handMade);
@@ -62,7 +63,8 @@ describe("LearnerModel Schema works with Firestore", () => {
             },
             "knowledgeModel": {
                 "id": "fdsf"
-            }
+            },
+            "userActionLog": {}
         } as LearnerModel;
 
         expect(lm).to.deep.equal(handMade);

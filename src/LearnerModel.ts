@@ -40,8 +40,8 @@ export class Path { constructor(public id: string) {} }
 /** The series of paths up to this point */
 export class PathSequence { id : string; seq : Path[]; }
 export class Probability { constructor(public prob: string) {} }
-export class UserAction { id : string }
-class SurveyQuestion {
+export class UserAction { constructor(public id : string){} }
+export class SurveyQuestion {
     // TODO: should this just be the question as a string or an id?
     id : string;
 }
@@ -53,7 +53,9 @@ export class LearnerResponse {
 
 export class LearnerModel implements FirestoreSync {
     userActionLog : SetID<UserAction>;
-    constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {    }
+    constructor(public learner: Learner, public knowledgeModel: LearnerKnowledgeModel) {
+        this.userActionLog = new SetID();
+    }
     /** Records actions taken by this learner */
     addUserAction (ua: UserAction) {
         this.userActionLog.add(ua);
