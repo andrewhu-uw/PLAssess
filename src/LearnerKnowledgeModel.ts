@@ -15,7 +15,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     byPathSequences : MapID<PathSequence, Probability>;
     pathPrior : MapID<Path, Probability>;
     pathSeqPrior : MapID<PathSequence, Probability>;
-    updateLog: KMUpdateLog;
+    updateLog: SetID<KMUpdateRow>;
     constructor(_id : string) {
         this.id = _id;
     }
@@ -31,7 +31,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<Path, Probability>(), 
                                     new MapID<PathSequence, Probability>(), 
                                     new MapID<PathSequence, Probability>());
-        this.updateLog.addEntry(input);
+        this.updateLog.add(input);
     }
     send() : Promise<void | WriteResult> {
         // Adding a new object
@@ -74,13 +74,5 @@ class KMUpdateRow {
         this.pathAfter = _pathAfter;
         this.pathSeqBefore = _pathSeqBefore;
         this.pathSeqAfter = _pathSeqAfter;
-    }
-}
-
-/** A set of KMUpdateRow's */
-class KMUpdateLog {
-    rowSet : SetID<KMUpdateRow>;
-    addEntry (input : KMUpdateRow) {
-        this.rowSet.add(input);
     }
 }

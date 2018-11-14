@@ -45,11 +45,7 @@ export class SurveyQuestion {
     // TODO: should this just be the question as a string or an id?
     id : string;
 }
-export class LearnerResponse {
-    id: string;
-    // TODO: Update with what Greg says should go in here
-    constructor(public q: SurveyQuestion) {}
-}
+export class LearnerResponse {constructor(public q: SurveyQuestion, public id: string) {}}
 
 export class LearnerModel implements FirestoreSync {
     userActionLog : SetID<UserAction>;
