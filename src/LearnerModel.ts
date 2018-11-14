@@ -78,7 +78,7 @@ export class LearnerModel implements FirestoreSync {
         return DB.getInstance().collection('LearnerModel').doc(this.learner.id).set({
             "learner" : this.learner.id,
             "knowledgeModel" : this.knowledgeModel.id,
-            //"userActionLog" : this.userActionLog
+            "userActionLog" : toPlainObject(this.userActionLog)
         });
     }
 }
