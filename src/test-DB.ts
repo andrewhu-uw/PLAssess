@@ -40,7 +40,31 @@ describe("Firestore Cloud DB", () => {
         expect(typeof(lm.learner.id)).to.equal("string");
     });
 
-    // should not change the id after second send
+    it ("Should not change id after second send (without changing lm)", async () => {
+        var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
+        var lm = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
+
+        await lm.send();
+        expect(typeof(lm.learner.id)).to.equal("string");
+        var originalID = lm.learner.id;
+        
+        await lm.send();
+        expect(lm.learner.id).to.equal(originalID);
+    })
+
+    it ("Should not change id after second send (with changing lm)", async () => {
+        var learner = new Learner(true, 4, "Andrew", "Hu", "Andrew", "M", new Date(5000).toJSON(), 5);
+        var lm = new LearnerModel(learner, new LearnerKnowledgeModel("fdsf"));
+
+        await lm.send();
+        expect(typeof(lm.learner.id)).to.equal("string");
+        var originalID = lm.learner.id;
+        
+        lm.learner.mindset = 1;
+        lm.learner.age = 5;
+        await lm.send();
+        expect(lm.learner.id).to.equal(originalID);
+    })
 
     it ("Should load LKM with just ID", async () => {
         // hello id created manually for testing via firebase 
