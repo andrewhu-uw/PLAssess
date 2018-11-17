@@ -1,10 +1,11 @@
-import { MapID, SetID } from "./Map";
-import {DB, toPlainObject, FirestoreSync} from "./DB";
+import { MapID, SetID, MapString } from "./Map";
+import {DB, toPlainObject, FirestoreSync } from "./DB";
 import { WriteResult } from "@google-cloud/firestore";
 import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 
 export class Learner implements FirestoreSync{
     id : string;
+    testSessions : TestSession[];
     constructor(public difficultyStyle: boolean,
                 public mindset: number,
                 public firstName: string,
@@ -35,13 +36,34 @@ export class Learner implements FirestoreSync{
     }
 }
 
+export class TestSession {
+    id : string;
+    knowledgeModel : LearnerKnowledgeModel;
+    pastProblems : Problem[];
+    currentProblem : Problem;
+}
 /** Which part of program tracing is being assessed */
 export class Path { constructor(public id: string) {} }
 /** The series of paths up to this point */
 export class PathSequence { id : string; seq : Path[]; }
 export class Probability { constructor(public prob: string) {} }
 export class UserAction { constructor(public id : string){} }
-export class Prompt { constructor(public id : string){}}
+export class SurveyQuestion { constructor(public id : string){}}
+export class Problem {
+    programID : string;
+    startingState : MapString<string>;
+    prompts : Prompt[];
+}
+export class Prompt { 
+    id : string;
+    // TODO: What do these properties mean?
+    location : string;
+    howToShow : string;
+    dependentPaths : Path[];
+    constructor(question : string){
+        this.id = question;
+    }
+}
 export class LearnerResponse {  // LearnerResponse's id is the question
     id : string
     constructor(q : Prompt, public answer: string) {
@@ -64,10 +86,10 @@ export class LearnerModel implements FirestoreSync {
     /** What are all of the current answers to all of the questions
      * TODO: clarify are the keys here all of the questions total, or those asked so far?
      */
-    latestSurveyAnswers () : MapID<Prompt, string> {
+    latestSurveyAnswers () : MapID<SurveyQuestion, string> {
         return new MapID();
     }
-    historicalSurveyAnswers () : MapID<Prompt, string> {
+    historicalSurveyAnswers () : MapID<SurveyQuestion, string> {
         return new MapID();
     }
     async send () : Promise<WriteResult> {

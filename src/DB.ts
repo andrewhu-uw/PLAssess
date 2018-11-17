@@ -3,6 +3,7 @@ import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { Firestore, DocumentSnapshot } from "@google-cloud/firestore";
+import { MapString, MapID, SetID } from "./Map";
 
 export interface FirestoreSync {
     send() : Promise<any>;
@@ -55,6 +56,14 @@ export module DB {
     }
 }
 
+// This does not work because Firestore set() does not support objects created with `new` at all
+/* 
+export function toPlainObjectFromMap(m : MapID<any, any> | MapString<any>) {
+    delete m.get;
+    delete m.set;
+    return m;
+}
+*/
 export function toPlainObject(o : Object): Object {
     return JSON.parse(JSON.stringify(o));
 }

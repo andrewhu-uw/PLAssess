@@ -22,6 +22,7 @@ describe("LearnerModel Schema", () => {
             },
             "knowledgeModel": {
                 "id": "fdsf",
+                "pathPrior": {},
                 "updateLog": {}
             },
             "userActionLog": {}
@@ -64,6 +65,7 @@ describe("LearnerModel Schema works with Firestore", () => {
             },
             "knowledgeModel": {
                 "id": "fdsf",
+                "pathPrior": {},
                 "updateLog": {}
             },
             "userActionLog": {}

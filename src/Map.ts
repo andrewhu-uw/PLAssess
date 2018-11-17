@@ -14,6 +14,15 @@ export class MapID<K extends HasID, V> {
     }
 }
 
+export class MapString<V> {
+    set(key : string, val : V) {
+        this[key] = val;
+    }
+    get(key : string) {
+        return this[key];
+    }
+}
+
 export class SetID<K extends HasID> {
     add(entry: K) {
         this[entry.id] = entry;

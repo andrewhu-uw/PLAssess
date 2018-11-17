@@ -13,12 +13,13 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     id : string;
     byPath : MapID<Path, Probability>;
     byPathSequences : MapID<PathSequence, Probability>;
-    pathPrior : MapID<Path, Probability>;
-    pathSeqPrior : MapID<PathSequence, Probability>;
+    pathPrior : MapID<Path, Probability>; // should be in constructor, can have a default argument
+    pathSeqPrior : MapID<PathSequence, Probability>; 
     updateLog: SetID<KMUpdateRow>;
     constructor(_id : string) {
         this.id = _id;
         this.updateLog = new SetID();
+        this.pathPrior = new MapID();
     }
     
     getPath () : MapID<Path, Probability> { return this.byPath; }
@@ -42,6 +43,10 @@ export class LearnerKnowledgeModel implements FirestoreSync {
             ).then((docRef) => {
                 // Set the local ID to the Firebase auto ID
                 this.id = docRef.id;
+
+                // TODO: check this by debugging and pausing here then open
+                // firebase and see if it already has the id
+                var foo;
                 // Update the ID field in the database
                 // TODO: Ask Greg if this is necessary. I think so, but not sure
                 docRef.update({
