@@ -47,11 +47,15 @@ export class TestSession implements FirestoreSync {
     id : string;
     pastProblems : Problem[];
     private currentProblem : Problem;
-    constructor(public knowledgeModel : LearnerKnowledgeModel){}
+    constructor(public KMID : string) {  // Must point to an actual KnowledgeModel
+        if (KMID == null) {
+            throw "ID is null/undefined";
+        }
+    }
     send() : Promise<WriteResult> {
         if (this.id == undefined) {
             return DB.getInstance().collection('TestSession').add(
-                    toPlainObject(this)
+                toPlainObject(this)
             ).then(docRef => {
                 this.id = docRef.id;
                 return docRef.update({
@@ -115,6 +119,7 @@ export class LearnerModel implements FirestoreSync {
     addTestSession (ts : TestSession) {
         this.learner.addTestSession(ts);
     }
+    
     /** What are all of the current answers to all of the questions
      * TODO: clarify are the keys here all of the questions total, or those asked so far?
      */

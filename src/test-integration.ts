@@ -72,16 +72,23 @@ describe("LKM Integration tests", () => {
         var linda = new Learner(true, 5, "Linda", "Langley", "Linda", "F", "11/17/1998", 20);
         var lindaKM = new LearnerKnowledgeModel(null);
         var lm = new LearnerModel(linda, lindaKM);
+        // LearnerModel must be uploaded before a TestSession can be created
+        await lm.send();
 
         // Linda starts a new test
-        var testSess = new TestSession(lindaKM);
+        var testSess = new TestSession(lindaKM.id);
         lm.addTestSession(testSess);
+        
+        lm.learner.testSessions.forEach(session => {
+            expect(typeof(session.KMID)).to.equal("string");
+        })
 
         // App loads questions to show Linda
         // I take this to mean that one Problem is loaded into the TestSession
         // For now, let's just get one of the Problems
         // testProblem is a test example manually created
         var problem = await DB.getProblem("testProblem");
+
         expect(problem.programID).to.equal("testProgram");
         expect(problem.promptIDs).to.deep.equal(["(some id)", "(some other id)"]);
         expect(problem.startingState).to.deep.equal({
@@ -89,8 +96,12 @@ describe("LKM Integration tests", () => {
         });
 
         testSess.setCurrentProblem(problem);
-
         // Upload the new learner, LKM, and test session
         lm.send();
+
+        // Retrieve the program and prompts, so that they can be displayed
+
+
+        // Linda answers the first prompt
     });
 })
