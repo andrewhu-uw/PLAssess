@@ -91,3 +91,13 @@ The connection to the firebase DB is controlled by the DB module in DB.ts
 After that, objects can be loaded from the database with the `DB.get*()` functions and
 any class that implements the `FirestoreSync` interface can be used to send updates
  to the database.
+
+## JS Refresher
+
+### `null` vs `undefined`
+
+When a property has not been used before it is `undefined`. Null is loosely equal to `undefined`, AKA `undefined == null`.
+However, they are not strictly equal, AKA `undefined === null`.
+
+What the heck is `null` then? You can assign a value to be `null`, but I mean you can also assign a value to be `undefined`.
+I dunno, that's for someone with more JS experience to answer.

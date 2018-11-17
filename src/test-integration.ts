@@ -1,9 +1,9 @@
 import "mocha"
 import { expect } from "chai"
 import { MapID } from "./Map";
-import { Path, Probability, LearnerResponse, Prompt } from "./LearnerModel";
+import { Path, Probability, LearnerResponse, Prompt, Learner, TestSession, LearnerModel } from "./LearnerModel";
 import { DB } from "./DB";
-import { createLearnerKnowledgeModel } from "./LearnerKnowledgeModel";
+import { createLearnerKnowledgeModel, LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 
 describe("LKM Integration tests", () => {
     before(() => {
@@ -25,17 +25,6 @@ describe("LKM Integration tests", () => {
         
         return multiEntry;
     }
-    // test lkm with multiple entries works
-    
-    // create lkm
-    // save it
-    // call update several times on LKM (first once, then check it worked, then multiple, then check works again
-    
-    // this is an example of test for "how to use these classes in the application"
-    // they may also surface api usability issues (like ugh this is a  little ugly)
-    // we can talk about those on slack or at next meeting depending on severity
-    
-    // more tests that depend on Map (like for LKM) are in test-Map.ts at bottom
 
     it ("LKM with multiple entries", async function() {
         this.timeout(5000);
@@ -76,5 +65,32 @@ describe("LKM Integration tests", () => {
             id: "x++",
             answer: "x += 1"
         });
-    })
+    });
+
+    it ("Multiple session integration test", async ()=>{
+        // Learner Linda goes to the site, and creates an account
+        var linda = new Learner(true, 5, "Linda", "Langley", "Linda", "F", "11/17/1998", 20);
+        var lindaKM = new LearnerKnowledgeModel(null);
+        var lm = new LearnerModel(linda, lindaKM);
+
+        // Linda starts a new test
+        var testSess = new TestSession(lindaKM);
+        lm.addTestSession(testSess);
+
+        // App loads questions to show Linda
+        // I take this to mean that one Problem is loaded into the TestSession
+        // For now, let's just get one of the Problems
+        // testProblem is a test example manually created
+        var problem = await DB.getProblem("testProblem");
+        expect(problem.programID).to.equal("testProgram");
+        expect(problem.promptIDs).to.deep.equal(["(some id)", "(some other id)"]);
+        expect(problem.startingState).to.deep.equal({
+            varName: "varValue"
+        });
+
+        testSess.setCurrentProblem(problem);
+
+        // Upload the new learner, LKM, and test session
+        lm.send();
+    });
 })

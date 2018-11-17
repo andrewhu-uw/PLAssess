@@ -1,12 +1,12 @@
-import { Learner, LearnerModel, UserAction } from "./LearnerModel"
+import { Learner, LearnerModel, UserAction, Problem } from "./LearnerModel"
 import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
-import { Firestore, DocumentSnapshot } from "@google-cloud/firestore";
+import { Firestore, WriteResult } from "@google-cloud/firestore";
 import { MapString, MapID, SetID } from "./Map";
 
 export interface FirestoreSync {
-    send() : Promise<any>;
+    send() : Promise<WriteResult>;
 }
 
 interface LearnerModelRef {
@@ -50,9 +50,15 @@ export module DB {
     }
 
     export async function getLearnerKnowledgeModel(id : string) : Promise<LearnerKnowledgeModel> {
-        return db.collection('LearnerKnowledgeModel').doc(id).get().then((snap) => {
+        return db.collection('LearnerKnowledgeModel').doc(id).get().then(snap => {
             return snap.data() as LearnerKnowledgeModel;
         });
+    }
+
+    export async function getProblem(id : string) : Promise<Problem> {
+        return db.collection('Problem').doc(id).get().then(snap => {
+            return snap.data() as Problem;
+        })
     }
 }
 

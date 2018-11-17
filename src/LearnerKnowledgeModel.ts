@@ -35,7 +35,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<PathSequence, Probability>());
         this.updateLog.add(input);
     }
-    send() : Promise<void | WriteResult> {
+    send() : Promise<WriteResult> {
         // Adding a new object
         if (this.id == null) {
             return DB.getInstance().collection('LearnerKnowledgeModel').add(
@@ -49,7 +49,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                 var foo;
                 // Update the ID field in the database
                 // TODO: Ask Greg if this is necessary. I think so, but not sure
-                docRef.update({
+                return docRef.update({
                     id : docRef.id
                 });
 

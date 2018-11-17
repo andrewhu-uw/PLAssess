@@ -3,9 +3,9 @@ import {DB, toPlainObject, FirestoreSync } from "./DB";
 import { WriteResult } from "@google-cloud/firestore";
 import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 
-export class Learner implements FirestoreSync{
+export class Learner implements FirestoreSync {
     id : string;
-    testSessions : TestSession[];
+    testSessions : TestSession[] = [];
     constructor(public difficultyStyle: boolean,
                 public mindset: number,
                 public firstName: string,
@@ -13,10 +13,14 @@ export class Learner implements FirestoreSync{
                 public preferredName: string,
                 public gender: string,
                 public birthDate: string,
-                public age: number) {    }
-    async send () : Promise<void | WriteResult> {
+                public age: number) {}
+    async send () : Promise<WriteResult> {
+        // TODO deal with errors from sending the testSessions
+        this.testSessions.forEach(session => {
+            session.send().catch(reason => console.error(reason));
+        })
         // Adding a new object
-        if (this.id == null) {
+        if (this.id == undefined) {
             return DB.getInstance().collection('Learner').add(
                 toPlainObject(this)
             ).then((docRef) => {
@@ -24,7 +28,7 @@ export class Learner implements FirestoreSync{
                 this.id = docRef.id;
                 // Update the ID field in the database
                 // TODO: Ask Greg if this is necessary. I think so, but not sure
-                docRef.update({
+                return docRef.update({
                     id : docRef.id
                 });
             });
@@ -32,15 +36,40 @@ export class Learner implements FirestoreSync{
             return DB.getInstance().collection('Learner').doc(this.id).set(
                 toPlainObject(this)
             );
-        }      
+        }
+    }
+    addTestSession(t : TestSession) {
+        this.testSessions.push(t);
     }
 }
 
-export class TestSession {
+export class TestSession implements FirestoreSync {
     id : string;
-    knowledgeModel : LearnerKnowledgeModel;
     pastProblems : Problem[];
-    currentProblem : Problem;
+    private currentProblem : Problem;
+    constructor(public knowledgeModel : LearnerKnowledgeModel){}
+    send() : Promise<WriteResult> {
+        if (this.id == undefined) {
+            return DB.getInstance().collection('TestSession').add(
+                    toPlainObject(this)
+            ).then(docRef => {
+                this.id = docRef.id;
+                return docRef.update({
+                    id : docRef.id
+                });
+            })
+        } else {
+            return DB.getInstance().collection('TestSession').doc(this.id).set(toPlainObject(this));
+        }
+    }
+    setCurrentProblem(input : Problem) : void {
+        if (this.currentProblem == undefined) {
+            this.currentProblem = input;
+        } else {
+            this.pastProblems.push(this.currentProblem);
+            this.currentProblem = input;
+        }
+    }
 }
 /** Which part of program tracing is being assessed */
 export class Path { constructor(public id: string) {} }
@@ -52,7 +81,7 @@ export class SurveyQuestion { constructor(public id : string){}}
 export class Problem {
     programID : string;
     startingState : MapString<string>;
-    prompts : Prompt[];
+    promptIDs : string[];
 }
 export class Prompt { 
     id : string;
@@ -82,6 +111,9 @@ export class LearnerModel implements FirestoreSync {
     }
     addSurveyAnswer (answer: LearnerResponse) {
         this.knowledgeModel.update(answer);
+    }
+    addTestSession (ts : TestSession) {
+        this.learner.addTestSession(ts);
     }
     /** What are all of the current answers to all of the questions
      * TODO: clarify are the keys here all of the questions total, or those asked so far?
