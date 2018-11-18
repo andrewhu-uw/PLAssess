@@ -101,6 +101,7 @@ describe("LKM Integration tests", () => {
 
         // Retrieve the program and prompts, so that they can be displayed
         const program = await DB.getProgram(problem.programID);
+        // Display using program
 
         // Load all of the prompts
         // TODO figure out if there is a better way to do this

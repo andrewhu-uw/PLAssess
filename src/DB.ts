@@ -47,18 +47,18 @@ export module DB {
         return getTemplate<Learner>(id, "Learner");
     }
     export async function getLearnerKnowledgeModel(id : string) : Promise<LearnerKnowledgeModel> {
-        return getTemplate<LearnerKnowledgeModel>(id, "LearnerKnowledgeModel");
+        return getTemplate<LearnerKnowledgeModel>(id, LearnerKnowledgeModel.name);
     }
     export async function getProblem(id : string) : Promise<Problem> {
-        return getTemplate<Problem>(id, "Problem");
+        return getTemplate<Problem>(id, Problem.name);
     }
     export async function getProgram(id : string) : Promise<Program> {
-        return getTemplate<Program>(id, "Program");
+        return getTemplate<Program>(id, Program.name);
     }
     export async function getPrompt(id : string) : Promise<Prompt> {
-        return getTemplate<Prompt>(id, "Prompt");
+        return getTemplate<Prompt>(id, Prompt.name);
     }
-    async function getTemplate<V>(id : string, vname : string) : Promise<V> {
+    async function getTemplate<V extends Object>(id : string, vname : string) : Promise<V> {
         return db.collection(vname).doc(id).get().then(snap => {
             return snap.data() as V;
         })
