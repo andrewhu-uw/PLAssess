@@ -35,6 +35,9 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<PathSequence, Probability>());
         this.updateLog.add(input);
     }
+    hasResponse(lr : LearnerResponse): boolean {
+        return this.updateLog[lr.id] !== undefined;
+    }
     send() : Promise<WriteResult> {
         // Adding a new object
         if (this.id == null) {

@@ -6,6 +6,7 @@ import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 export class Learner implements FirestoreSync {
     id : string;
     testSessions : TestSession[] = [];
+    currentTestSession : TestSession = null;
     constructor(public difficultyStyle: boolean,
                 public mindset: number,
                 public firstName: string,
@@ -38,7 +39,8 @@ export class Learner implements FirestoreSync {
             );
         }
     }
-    addTestSession(t : TestSession) {
+    setCurrentTestSession(t : TestSession) {
+        this.currentTestSession = t;
         this.testSessions.push(t);
     }
 }
@@ -82,13 +84,17 @@ export class PathSequence { id : string; seq : Path[]; }
 export class Probability { constructor(public prob: string) {} }
 export class UserAction { constructor(public id : string){} }
 export class SurveyQuestion { constructor(public id : string){}}
+export class Program {
+    id : string;  // filename
+    contents : string;
+}
 export class Problem {
     programID : string;
     startingState : MapString<string>;
     promptIDs : string[];
 }
 export class Prompt { 
-    id : string;
+    id : string;  // question
     // TODO: What do these properties mean?
     location : string;
     howToShow : string;
@@ -96,6 +102,7 @@ export class Prompt {
     constructor(question : string){
         this.id = question;
     }
+    getQuestion() : string { return this.id; }
 }
 export class LearnerResponse {  // LearnerResponse's id is the question
     id : string
@@ -116,8 +123,11 @@ export class LearnerModel implements FirestoreSync {
     addSurveyAnswer (answer: LearnerResponse) {
         this.knowledgeModel.update(answer);
     }
-    addTestSession (ts : TestSession) {
-        this.learner.addTestSession(ts);
+    setCurrentTestSession (ts : TestSession) {
+        this.learner.setCurrentTestSession(ts);
+    }
+    updateKnowledgeModel (lr : LearnerResponse) {
+        this.knowledgeModel.update(lr);
     }
     
     /** What are all of the current answers to all of the questions

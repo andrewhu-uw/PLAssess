@@ -77,7 +77,7 @@ describe("LKM Integration tests", () => {
 
         // Linda starts a new test
         var testSess = new TestSession(lindaKM.id);
-        lm.addTestSession(testSess);
+        lm.setCurrentTestSession(testSess);
         
         lm.learner.testSessions.forEach(session => {
             expect(typeof(session.KMID)).to.equal("string");
@@ -89,8 +89,8 @@ describe("LKM Integration tests", () => {
         // testProblem is a test example manually created
         var problem = await DB.getProblem("testProblem");
 
-        expect(problem.programID).to.equal("testProgram");
-        expect(problem.promptIDs).to.deep.equal(["(some id)", "(some other id)"]);
+        expect(problem.programID).to.equal("hello.py");
+        //expect(problem.promptIDs).to.deep.equal(["TZaKbrxQ6FrDrj2d64mv", "Tn4kBa5LGDkrpI1hgYdZ"]);
         expect(problem.startingState).to.deep.equal({
             varName: "varValue"
         });
@@ -100,8 +100,25 @@ describe("LKM Integration tests", () => {
         lm.send();
 
         // Retrieve the program and prompts, so that they can be displayed
+        const program = await DB.getProgram(problem.programID);
 
+        // Load all of the prompts
+        // TODO figure out if there is a better way to do this
+        var promptPromises : Promise<Prompt>[] = [];
+        for (var i = 0; i < problem.promptIDs.length; i++) {
+            promptPromises[i] = DB.getPrompt(problem.promptIDs[i])
+        }
+        var prompts : Prompt[] = await Promise.all(promptPromises).then(values => values);
 
         // Linda answers the first prompt
+        // Display using prompts[0].getQuestion()
+
+        var lr = new LearnerResponse(prompts[0], "42");
+        
+        // Knowledge model updates
+        // saved in knowledgeModel.updateLog
+        lm.updateKnowledgeModel(lr);
+
+        expect(lm.knowledgeModel.hasResponse(lr));
     });
 })
