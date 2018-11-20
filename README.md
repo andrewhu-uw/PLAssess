@@ -56,6 +56,9 @@ But, I now have them installed locally and just alias mocha to "node_modules/moc
 
 With VS Code you should be able to run the task `test`.
 
+Based on [this post](https://medium.com/spektrakel-blog/debugging-typescript-from-vscode-3cb3a182bf63),
+I edited `launch.json`, so you should now be able to use `ts-node` debugging in VS Code
+
 #### Running Tests in Typescript!
 
 I added the `ts-node` dependency, which means that if you change the testing call,
