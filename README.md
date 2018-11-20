@@ -16,6 +16,15 @@ PLAssess
 
 `src` is where your source code goes, `dist` is where transpiled code goes
 
+#### Security
+
+You have to generate a new private key from `Firebase Console->PLAssess->
+Settings->Service Accounts`
+
+I do not think this is the best way to do it, I need to put more time
+into understanding Firebase/Firestore auth. For now, this is what
+you have to do, though
+
 ### Typescript
 
 Typescript is transpiled into Javascript, and the compiler settings are all in the `tsconfig.json`. When you want to compile your source, just run
