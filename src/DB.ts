@@ -73,6 +73,14 @@ export function toPlainObjectFromMap(m : MapID<any, any> | MapString<any>) {
     return m;
 }
 */
-export function toPlainObject(o : Object): Object {
+// TODO use the destructuring syntax instead
+/* export function toPlainObject(o : Object): Object {
     return JSON.parse(JSON.stringify(o));
+} */
+export function toPlainObject(o : Object): Object {
+    var res = {};
+    for (var prop in o) {
+        res[prop] = o[prop];
+    }
+    return res;
 }

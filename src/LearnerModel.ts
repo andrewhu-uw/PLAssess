@@ -1,5 +1,5 @@
 import { MapID, SetID, MapString } from "./Map";
-import {DB, toPlainObject, FirestoreSync } from "./DB";
+import { DB, FirestoreSync, toPlainObject } from "./DB";
 import { WriteResult } from "@google-cloud/firestore";
 import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 
@@ -22,7 +22,7 @@ export class Learner implements FirestoreSync {
         })
         // Adding a new object
         if (this.id == undefined) {
-            return DB.getInstance().collection('Learner').add(
+            return DB.getInstance().collection(Learner.name).add(
                 toPlainObject(this)
             ).then((docRef) => {
                 // Set the local ID to the Firebase auto ID
@@ -34,7 +34,7 @@ export class Learner implements FirestoreSync {
                 });
             });
         } else {
-            return DB.getInstance().collection('Learner').doc(this.id).set(
+            return DB.getInstance().collection(Learner.name).doc(this.id).set(
                 toPlainObject(this)
             );
         }
@@ -56,7 +56,7 @@ export class TestSession implements FirestoreSync {
     }
     send() : Promise<WriteResult> {
         if (this.id == undefined) {
-            return DB.getInstance().collection('TestSession').add(
+            return DB.getInstance().collection(TestSession.name).add(
                 toPlainObject(this)
             ).then(docRef => {
                 this.id = docRef.id;
@@ -65,7 +65,7 @@ export class TestSession implements FirestoreSync {
                 });
             })
         } else {
-            return DB.getInstance().collection('TestSession').doc(this.id).set(toPlainObject(this));
+            return DB.getInstance().collection(TestSession.name).doc(this.id).set(toPlainObject(this));
         }
     }
     setCurrentProblem(input : Problem) : void {
@@ -142,7 +142,7 @@ export class LearnerModel implements FirestoreSync {
     async send () : Promise<WriteResult> {
         await this.learner.send();
         await this.knowledgeModel.send();
-        return DB.getInstance().collection('LearnerModel').doc(this.learner.id).set({
+        return DB.getInstance().collection(LearnerModel.name).doc(this.learner.id).set({
             "learner" : this.learner.id,
             "knowledgeModel" : this.knowledgeModel.id,
             "userActionLog" : toPlainObject(this.userActionLog)

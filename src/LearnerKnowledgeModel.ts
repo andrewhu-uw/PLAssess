@@ -1,5 +1,5 @@
 import { Path, Probability, PathSequence, LearnerResponse } from "./LearnerModel"
-import { DB, toPlainObject, FirestoreSync } from "./DB";
+import { DB, FirestoreSync, toPlainObject } from "./DB";
 import { MapID, SetID } from "./Map";
 import { WriteResult } from "@google-cloud/firestore";
 
@@ -21,7 +21,6 @@ export class LearnerKnowledgeModel implements FirestoreSync {
         this.updateLog = new SetID();
         this.pathPrior = new MapID();
     }
-    
     getPath () : MapID<Path, Probability> { return this.byPath; }
     getPathSequences() : MapID<PathSequence, Probability> { return this.byPathSequences; }
     setPathPrior(p: Path, prob: Probability) { this.pathPrior.set(p, prob); }
@@ -41,7 +40,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     send() : Promise<WriteResult> {
         // Adding a new object
         if (this.id == null) {
-            return DB.getInstance().collection('LearnerKnowledgeModel').add(
+            return DB.getInstance().collection(LearnerKnowledgeModel.name).add(
                 toPlainObject(this)
             ).then((docRef) => {
                 // Set the local ID to the Firebase auto ID
@@ -49,7 +48,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
 
                 // TODO: check this by debugging and pausing here then open
                 // firebase and see if it already has the id
-                var foo;
+                var debugpoint;
                 // Update the ID field in the database
                 // TODO: Ask Greg if this is necessary. I think so, but not sure
                 return docRef.update({
@@ -58,7 +57,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
 
             })
         } else {
-            return DB.getInstance().collection('LearnerKnowledgeModel').doc(this.id).set(
+            return DB.getInstance().collection(LearnerKnowledgeModel.name).doc(this.id).set(
                 toPlainObject(this)
             );
         }

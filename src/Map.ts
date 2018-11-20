@@ -1,4 +1,4 @@
-import {DB, toPlainObject, FirestoreSync} from "./DB";
+import {DB, FirestoreSync, toPlainObject} from "./DB";
 import { WriteResult } from "@google-cloud/firestore";
 
 interface HasID {
@@ -35,8 +35,6 @@ export class SetID<K extends HasID> {
 export class MapWrapper<K extends HasID, V> implements FirestoreSync {
     constructor(public map : MapID<K,V>, public id: string){}
     send() : Promise<WriteResult>{
-        return DB.getInstance().collection('MapWrapper').doc(this.id).set(
-            toPlainObject(this)
-        );
+        return DB.getInstance().collection(MapWrapper.name).doc(this.id).set(toPlainObject(this));
     }
 }
