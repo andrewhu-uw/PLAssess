@@ -9,6 +9,7 @@ Backend for the PLAssess project
 ```
 PLAssess
 ├─src
+| └─test
 ├─dist
 └─priv
   └─firestore-private-key.json
