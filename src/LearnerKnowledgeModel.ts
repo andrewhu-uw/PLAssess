@@ -37,7 +37,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     hasResponse(lr : LearnerResponse): boolean {
         return this.updateLog[lr.id] !== undefined;
     }
-    send() : Promise<WriteResult> {
+    send() : Promise<void | WriteResult> {
         // Adding a new object
         if (this.id == null) {
             return DB.getInstance().collection(LearnerKnowledgeModel.name).add(
@@ -51,9 +51,9 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                 var debugpoint;
                 // Update the ID field in the database
                 // TODO: Ask Greg if this is necessary. I think so, but not sure
-                return docRef.update({
+                /* return docRef.update({
                     id : docRef.id
-                });
+                }); */
 
             })
         } else {

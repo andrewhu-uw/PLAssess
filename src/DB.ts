@@ -6,7 +6,7 @@ import { Firestore, WriteResult } from "@google-cloud/firestore";
 import { MapString, MapID, SetID } from "./Map";
 
 export interface FirestoreSync {
-    send() : Promise<WriteResult>;
+    send() : Promise<void | WriteResult>;
 }
 
 interface LearnerModelRef {
@@ -73,11 +73,11 @@ export function toPlainObjectFromMap(m : MapID<any, any> | MapString<any>) {
     return m;
 }
 */
-// TODO use the destructuring syntax instead
-/* export function toPlainObject(o : Object): Object {
-    return JSON.parse(JSON.stringify(o));
-} */
 export function toPlainObject(o : Object): Object {
+    return JSON.parse(JSON.stringify(o));
+}
+// This works, but at this point, it's so complicated that the JSON serialization is simpler
+/* export function toPlainObject(o : Object): Object {
     if (o === null) return null;
     if (typeof o != "object") return o;
     if (o instanceof Array) return o.map(toPlainObject);
@@ -86,4 +86,4 @@ export function toPlainObject(o : Object): Object {
         res[prop] = (typeof o[prop] == "object") ? toPlainObject(o[prop]) : o[prop];
     }
     return res;
-}
+} */
