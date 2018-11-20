@@ -1,0 +1,22 @@
+{
+  "name": "plassess",
+  "version": "0.1.0",
+  "description": "PLAssess",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha dist/test*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewhu-uw/PLAssess.git"
+  },
+  "author": "Andrew Hu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrewhu-uw/PLAssess/issues"
+  },
+  "homepage": "https://github.com/andrewhu-uw/PLAssess#readme",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
+}

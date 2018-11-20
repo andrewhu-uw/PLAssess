@@ -80,7 +80,7 @@ export function toPlainObjectFromMap(m : MapID<any, any> | MapString<any>) {
 export function toPlainObject(o : Object): Object {
     var res = {};
     for (var prop in o) {
-        res[prop] = o[prop];
+        res[prop] = (typeof o[prop] == "object") ? toPlainObject(o[prop]) : o[prop];
     }
     return res;
 }

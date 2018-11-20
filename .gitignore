@@ -1,3 +1,4 @@
 dist/*
 priv/*
 npm-debug*
+node_modules/
