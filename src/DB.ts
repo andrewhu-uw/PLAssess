@@ -78,6 +78,9 @@ export function toPlainObjectFromMap(m : MapID<any, any> | MapString<any>) {
     return JSON.parse(JSON.stringify(o));
 } */
 export function toPlainObject(o : Object): Object {
+    if (o === null) return null;
+    if (typeof o != "object") return o;
+    if (o instanceof Array) return o.map(toPlainObject);
     var res = {};
     for (var prop in o) {
         res[prop] = (typeof o[prop] == "object") ? toPlainObject(o[prop]) : o[prop];
