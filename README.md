@@ -39,11 +39,13 @@ In the top-level directory
 
 ### Installing Mocha & Chai
 
-We test the transpiled javascript using Mocha & Chai. Run the following command to install these two
+We test the transpiled javascript using Mocha & Chai. I originally installed these globally like so
 
 ```
-npm install -g mocha chai
+npm install -g mocha chai 
 ```
+
+But, I now have them installed locally and just alias mocha to "node_modules/mocha/bin/mocha", so that I can install typescript and ts-node locally.
 
 ### Running Tests
 
@@ -52,6 +54,19 @@ npm install -g mocha chai
 `mocha dist/test-name`
 
 With VS Code you should be able to run the task `test`.
+
+#### Running Tests in Typescript!
+
+I added the `ts-node` dependency, which means that if you change the testing call,
+you can test the Typescript without even compiling it.
+
+```
+mocha -r ts-node/register src/test*.ts
+```
+
+I timed it on the CS Lab Linux machines, and compiling to JavaScript and running
+mocha on plain JS took 11.3s total, but running mocha with ts-node on the TS
+took 9.5s
 
 #### When Tests Fail
 
