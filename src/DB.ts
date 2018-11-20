@@ -60,7 +60,9 @@ export module DB {
     }
     async function getTemplate<V extends Object>(id : string, vname : string) : Promise<V> {
         return db.collection(vname).doc(id).get().then(snap => {
-            return snap.data() as V;
+            let val = snap.data();
+            val.id = snap.id;
+            return val as V;
         })
     }
 }

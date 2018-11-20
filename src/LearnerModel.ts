@@ -15,7 +15,7 @@ export class Learner implements FirestoreSync {
                 public gender: string,
                 public birthDate: string,
                 public age: number) {}
-    async send () : Promise<WriteResult> {
+    async send () : Promise<void | WriteResult> {
         // TODO deal with errors from sending the testSessions
         this.testSessions.forEach(session => {
             session.send().catch(reason => console.error(reason));
@@ -29,9 +29,9 @@ export class Learner implements FirestoreSync {
                 this.id = docRef.id;
                 // Update the ID field in the database
                 // TODO: Ask Greg if this is necessary. I think so, but not sure
-                return docRef.update({
+                /* return docRef.update({
                     id : docRef.id
-                });
+                }); */
             });
         } else {
             return DB.getInstance().collection(Learner.name).doc(this.id).set(
@@ -54,15 +54,15 @@ export class TestSession implements FirestoreSync {
             throw "ID is null/undefined";
         }
     }
-    send() : Promise<WriteResult> {
+    send() : Promise<void | WriteResult> {
         if (this.id == undefined) {
             return DB.getInstance().collection(TestSession.name).add(
                 toPlainObject(this)
             ).then(docRef => {
                 this.id = docRef.id;
-                return docRef.update({
+                /* return docRef.update({
                     id : docRef.id
-                });
+                }); */
             })
         } else {
             return DB.getInstance().collection(TestSession.name).doc(this.id).set(toPlainObject(this));
