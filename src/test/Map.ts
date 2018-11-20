@@ -1,9 +1,9 @@
 import {expect} from "chai";
 import "mocha";
-import { MapID, MapWrapper } from "./Map";
-import { Path, Probability, Learner } from "./LearnerModel";
-import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel"
-import { DB } from "./DB";
+import { MapID, MapWrapper } from "../Map";
+import { Path, Probability, Learner } from "../LearnerModel";
+import { LearnerKnowledgeModel } from "../LearnerKnowledgeModel"
+import { DB } from "../DB";
 
 describe("MapID", () => {
     it("Should be an empty object on construction (without types)", () => {

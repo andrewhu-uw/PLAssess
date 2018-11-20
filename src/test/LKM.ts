@@ -1,10 +1,10 @@
 import { Learner, LearnerModel, UserAction, LearnerResponse, Prompt,
-    Path, Probability, } from "./LearnerModel"
-import { MapID } from "./Map";
+    Path, Probability, } from "../LearnerModel"
+import { MapID } from "../Map";
 import {expect, assert} from "chai";
 import "mocha";
-import { DB } from "./DB"
-import {LearnerKnowledgeModel, createLearnerKnowledgeModel} from "./LearnerKnowledgeModel"
+import { DB } from "../DB"
+import {LearnerKnowledgeModel, createLearnerKnowledgeModel} from "../LearnerKnowledgeModel"
 
 describe("LKM works with Firestore", () => {
     before(function () {

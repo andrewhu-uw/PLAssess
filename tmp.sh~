@@ -1,0 +1,2 @@
+tsc
+node_modules/mocha/bin/mocha dist/test*.js

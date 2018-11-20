@@ -1,9 +1,9 @@
 import "mocha"
 import { expect } from "chai"
-import { MapID } from "./Map";
-import { Path, Probability, LearnerResponse, Prompt, Learner, TestSession, LearnerModel } from "./LearnerModel";
-import { DB } from "./DB";
-import { createLearnerKnowledgeModel, LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
+import { MapID } from "../Map";
+import { Path, Probability, LearnerResponse, Prompt, Learner, TestSession, LearnerModel } from "../LearnerModel";
+import { DB } from "../DB";
+import { createLearnerKnowledgeModel, LearnerKnowledgeModel } from "../LearnerKnowledgeModel";
 
 describe("LKM Integration tests", () => {
     before(() => {

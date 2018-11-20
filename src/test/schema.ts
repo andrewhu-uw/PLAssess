@@ -1,8 +1,8 @@
-import { Learner, LearnerModel } from "./LearnerModel"
-import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel"
+import { Learner, LearnerModel } from "../LearnerModel"
+import { LearnerKnowledgeModel } from "../LearnerKnowledgeModel"
 import { expect } from "chai";
 import "mocha";
-import { DB } from "./DB";
+import { DB } from "../DB";
 
 describe("LearnerModel Schema", () => {
     it ("Should be equal to the example (before send)", () => {

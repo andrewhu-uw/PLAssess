@@ -4,9 +4,9 @@
   "description": "PLAssess",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register src/test",
-    "ts": "tsc",
-    "testjs": "mocha dist/test/"
+    "test": "mocha -r ts-node/register src/test/*.ts",
+    "tsc": "tsc",
+    "testjs": "mocha dist/test/*.js"
   },
   "repository": {
     "type": "git",

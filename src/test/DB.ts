@@ -1,8 +1,8 @@
-import { Learner, LearnerModel, UserAction, Path } from "./LearnerModel"
+import { Learner, LearnerModel, UserAction, Path } from "../LearnerModel"
 import {expect, assert} from "chai";
 import "mocha";
-import { DB } from "./DB"
-import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
+import { DB } from "../DB"
+import { LearnerKnowledgeModel } from "../LearnerKnowledgeModel";
 
 
 describe("Firestore Cloud DB", () => {
