@@ -25,7 +25,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     getPathSequences() : MapID<PathSequence, Probability> { return this.byPathSequences; }
     setPathPrior(p: Path, prob: Probability) { this.pathPrior.set(p, prob); }
     setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior.set(ps, prob); }
-    update(answer: LearnerResponse) {
+    update(answer: LearnerResponse) : Promise<void | WriteResult> {
         // create a KMUpdateRow with the input answer
         var input = new KMUpdateRow(answer, 
                                     new MapID<Path, Probability>(), 
@@ -33,6 +33,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<PathSequence, Probability>(), 
                                     new MapID<PathSequence, Probability>());
         this.updateLog.add(input);
+        return this.send();
     }
     hasResponse(lr : LearnerResponse): boolean {
         return this.updateLog[lr.id] !== undefined;

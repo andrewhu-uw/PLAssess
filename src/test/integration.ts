@@ -5,7 +5,7 @@ import { Path, Probability, LearnerResponse, Prompt, Learner, TestSession, Learn
 import { DB } from "../DB";
 import { createLearnerKnowledgeModel, LearnerKnowledgeModel } from "../LearnerKnowledgeModel";
 
-describe("LKM Integration tests", () => {
+describe("Integration tests", () => {
     before(() => {
         DB.init();
     })
@@ -118,8 +118,13 @@ describe("LKM Integration tests", () => {
         
         // Knowledge model updates
         // saved in knowledgeModel.updateLog
-        lm.updateKnowledgeModel(lr);
+        // Also, updates the server
+        var lkmUpdatePromise = lm.updateKnowledgeModel(lr);
 
         expect(lm.knowledgeModel.hasResponse(lr));
+        // Maybe redownload the LKM here and test that it worked
+        var redownload = await DB.getLearnerKnowledgeModel(lm.knowledgeModel.id);
+        await lkmUpdatePromise;
+        expect(redownload).to.deep.equal(lm.knowledgeModel);
     });
 })

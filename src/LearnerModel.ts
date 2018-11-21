@@ -126,8 +126,8 @@ export class LearnerModel implements FirestoreSync {
     setCurrentTestSession (ts : TestSession) {
         this.learner.setCurrentTestSession(ts);
     }
-    updateKnowledgeModel (lr : LearnerResponse) {
-        this.knowledgeModel.update(lr);
+    updateKnowledgeModel (lr : LearnerResponse): Promise<void | WriteResult> {
+        return this.knowledgeModel.update(lr);
     }
     
     /** What are all of the current answers to all of the questions
