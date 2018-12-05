@@ -15,7 +15,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     byPathSequences : MapID<PathSequence, Probability>;
     pathPrior : MapID<Path, Probability>; // should be in constructor, can have a default argument
     pathSeqPrior : MapID<PathSequence, Probability>; 
-    updateLog: Array<KMUpdateRow>;
+    updateLog: KMUpdateRow[];
     constructor(_id : string) {
         this.id = _id;
         this.updateLog = new Array();

@@ -92,6 +92,7 @@ export class Problem {
     programID : string;
     startingState : MapString<string>;
     promptIDs : string[];
+    currentPromptAnswers : LearnerResponse[];
 }
 export class Prompt { 
     id : string;  // question
