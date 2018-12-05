@@ -25,7 +25,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     getPathSequences() : MapID<PathSequence, Probability> { return this.byPathSequences; }
     setPathPrior(p: Path, prob: Probability) { this.pathPrior.set(p, prob); }
     setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior.set(ps, prob); }
-    update(answer: LearnerResponse) : Promise<void | WriteResult> {
+    update(answer: LearnerResponse) {
         // create a KMUpdateRow with the input answer
         var input = new KMUpdateRow(answer, 
                                     new MapID<Path, Probability>(), 
@@ -33,14 +33,9 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<PathSequence, Probability>(), 
                                     new MapID<PathSequence, Probability>());
         this.updateLog.push(input);
-        return this.send();
     }
     hasResponse(lr : LearnerResponse): boolean {
         return this.updateLog.findIndex(el => el.response == lr) >= 0
-    }
-    /** TODO implement a search over the log returning the LR with the most recent timestamp */
-    getMostRecentResponse(pr: Prompt): LearnerResponse | undefined {
-        return undefined;
     }
     send() : Promise<void | WriteResult> {
         // Adding a new object
@@ -72,7 +67,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
 /** timestamp is set at the time it is constructed */
 class KMUpdateRow {
     timestamp : string;
-    question: string;
+    question: Prompt;
     response : LearnerResponse;
     pathBefore : MapID<Path, Probability>;
     pathAfter  : MapID<Path, Probability>;
@@ -82,7 +77,7 @@ class KMUpdateRow {
             _pathSeqBefore: MapID<PathSequence, Probability>, _pathSeqAfter: MapID<PathSequence, Probability>) {
         this.timestamp = new Date().toJSON();
         this.response = _response;
-        this.question = _response.id;
+        this.question = _response.question;
         this.pathBefore = _pathBefore;
         this.pathAfter = _pathAfter;
         this.pathSeqBefore = _pathSeqBefore;

@@ -48,7 +48,7 @@ export class Learner implements FirestoreSync {
 export class TestSession implements FirestoreSync {
     id : string;
     pastProblems : Problem[];
-    private currentProblem : Problem;
+    currentProblem : Problem;
     constructor(public KMID : string) {  // Must point to an actual KnowledgeModel
         if (KMID == null) {
             throw "ID is null/undefined";
@@ -92,7 +92,7 @@ export class Problem {
     programID : string;
     startingState : MapString<string>;
     promptIDs : string[];
-    currentPromptAnswers : LearnerResponse[];
+    currentPromptAnswers : MapID<Prompt, LearnerResponse>;
 }
 export class Prompt { 
     id : string;  // question
@@ -106,9 +106,9 @@ export class Prompt {
     getQuestion() : string { return this.id; }
 }
 export class LearnerResponse {  // LearnerResponse's id is the question
-    id : string
+    question : Prompt
     constructor(q : Prompt, public answer: string) {
-        this.id = q.id;
+        this.question = q;
     }
 }
 
@@ -127,8 +127,12 @@ export class LearnerModel implements FirestoreSync {
     setCurrentTestSession (ts : TestSession) {
         this.learner.setCurrentTestSession(ts);
     }
-    updateKnowledgeModel (lr : LearnerResponse): Promise<void | WriteResult> {
-        return this.knowledgeModel.update(lr);
+    /** This updates the testSession's most recent answers as well as the LKM */
+    updateKnowledgeModel (lr : LearnerResponse): Promise<WriteResult> {
+        // Emulate MapID, figure out if there's a cleaner way to do this
+        this.learner.currentTestSession.currentProblem.currentPromptAnswers[lr.question.id] = lr;
+        this.knowledgeModel.update(lr);
+        return this.send();
     }
     
     /** What are all of the current answers to all of the questions
@@ -140,13 +144,17 @@ export class LearnerModel implements FirestoreSync {
     historicalSurveyAnswers () : MapID<SurveyQuestion, string> {
         return new MapID();
     }
-    async send () : Promise<WriteResult> {
-        await this.learner.send();
-        await this.knowledgeModel.send();
-        return DB.getInstance().collection(LearnerModel.name).doc(this.learner.id).set({
+    async send () : Promise<any> {
+        var learnerPromise = this.learner.send();
+        var lkmPromise = this.knowledgeModel.send();
+        // Have to await here because the LM entry depends on both ids
+        if (this.learner.id == null) await learnerPromise;
+        if (this.knowledgeModel.id == null) await lkmPromise;
+        var lmPromise = DB.getInstance().collection(LearnerModel.name).doc(this.learner.id).set({
             "learner" : this.learner.id,
             "knowledgeModel" : this.knowledgeModel.id,
             "userActionLog" : toPlainObject(this.userActionLog)
         });
+        return Promise.all([learnerPromise, lkmPromise, lmPromise])
     }
 }
