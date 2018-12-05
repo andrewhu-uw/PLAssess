@@ -135,12 +135,13 @@ describe("Integration tests", () => {
 
         // Linda answers prompt2 in that program
         var lr2 = new LearnerResponse(prompts[1], "351");
-        lm.update(lr2);
+        // We have to await here because its possible that lr2 will arrive later than lr1b
+        await lm.update(lr2);
 
         // Linda goes back and changes her answer to prompt1
         var lr1b = new LearnerResponse(prompts[0], "24");
         // Adds a new response for prompt1
-        lm.update(lr1b);
+        await lm.update(lr1b);
         // TODO check that both responses to prompt1 are still in the LKM
 
         // Linda logs off, save her id because I don't have auth working
@@ -162,6 +163,12 @@ describe("Integration tests", () => {
         
         expect(lm.knowledgeModel.updateLog[0].response)
             .to.deep.equal({ answer: "42", 
+                question: {id: "TZaKbrxQ6FrDrj2d64mv", question: "4+6"}});
+        expect(lm.knowledgeModel.updateLog[1].response)
+            .to.deep.equal({ answer: "351", 
+                question: {id: "Tn4kBa5LGDkrpI1hgYdZ", question: "print(\"hello\")"}});
+        expect(lm.knowledgeModel.updateLog[2].response)
+            .to.deep.equal({ answer: "24", 
                 question: {id: "TZaKbrxQ6FrDrj2d64mv", question: "4+6"}});
     })
 })
