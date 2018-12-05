@@ -34,8 +34,9 @@ export module DB {
         inited = true;
     }
 
-    export async function getLearnerModel(id: string) : Promise<LearnerModel> {
-        var lmRef : LearnerModelRef = await db.collection('LearnerModel').doc(id).get().then((doc) => {
+    /** Currently, LearnerModel is indexed by learner ID*/
+    export async function getLearnerModel(learnerID: string) : Promise<LearnerModel> {
+        var lmRef : LearnerModelRef = await db.collection('LearnerModel').doc(learnerID).get().then((doc) => {
             return doc.data() as LearnerModelRef;
         });
         var learner : Learner = await getLearner(lmRef.learner);

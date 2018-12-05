@@ -71,6 +71,7 @@ describe("Integration tests", () => {
         }); */
     });
 
+    var lindaID = undefined;
     it ("Multiple session integration test", async function(){
         this.timeout(5000);
         // Learner Linda goes to the site, and creates an account
@@ -124,7 +125,7 @@ describe("Integration tests", () => {
         // Knowledge model updates
         // saved in knowledgeModel.updateLog
         // Also updates the server
-        var lkmUpdatePromise = lm.updateKnowledgeModel(lr1a);
+        var lkmUpdatePromise = lm.update(lr1a);
 
         expect(lm.knowledgeModel.hasResponse(lr1a));  // Verify the knowledge model updated locally
         // Maybe redownload the LKM here and test that it worked
@@ -134,12 +135,33 @@ describe("Integration tests", () => {
 
         // Linda answers prompt2 in that program
         var lr2 = new LearnerResponse(prompts[1], "351");
-        lm.updateKnowledgeModel(lr2);
+        lm.update(lr2);
 
         // Linda goes back and changes her answer to prompt1
         var lr1b = new LearnerResponse(prompts[0], "24");
         // Adds a new response for prompt1
-        lm.updateKnowledgeModel(lr1b);
+        lm.update(lr1b);
         // TODO check that both responses to prompt1 are still in the LKM
+
+        // Linda logs off, save her id because I don't have auth working
+        lindaID = linda.id
     });
+
+    it ("Multiple session integration test pt.2", async function() {
+        // Linda logs back on
+        var lm: LearnerModel = await DB.getLearnerModel(lindaID);
+        var testSess: TestSession = lm.learner.currentTestSession;
+        expect(testSess).to.exist;
+
+        expect((testSess.currentProblem
+                .currentPromptAnswers["TZaKbrxQ6FrDrj2d64mv"] as LearnerResponse)
+                .answer).to.equal("24");
+        expect((testSess.currentProblem
+            .currentPromptAnswers["Tn4kBa5LGDkrpI1hgYdZ"] as LearnerResponse)
+            .answer).to.equal("351");
+        
+        expect(lm.knowledgeModel.updateLog[0].response)
+            .to.deep.equal({ answer: "42", 
+                question: {id: "TZaKbrxQ6FrDrj2d64mv", question: "4+6"}});
+    })
 })

@@ -128,7 +128,7 @@ export class LearnerModel implements FirestoreSync {
         this.learner.setCurrentTestSession(ts);
     }
     /** This updates the testSession's most recent answers as well as the LKM */
-    updateKnowledgeModel (lr : LearnerResponse): Promise<WriteResult> {
+    update (lr : LearnerResponse): Promise<WriteResult> {
         // Emulate MapID, figure out if there's a cleaner way to do this
         this.learner.currentTestSession.currentProblem.currentPromptAnswers[lr.question.id] = lr;
         this.knowledgeModel.update(lr);
