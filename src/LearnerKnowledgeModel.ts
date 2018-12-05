@@ -1,4 +1,4 @@
-import { Path, Probability, PathSequence, LearnerResponse } from "./LearnerModel"
+import { Path, Probability, PathSequence, LearnerResponse, Prompt } from "./LearnerModel"
 import { DB, FirestoreSync, toPlainObject } from "./DB";
 import { MapID, SetID } from "./Map";
 import { WriteResult } from "@google-cloud/firestore";
@@ -15,10 +15,10 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     byPathSequences : MapID<PathSequence, Probability>;
     pathPrior : MapID<Path, Probability>; // should be in constructor, can have a default argument
     pathSeqPrior : MapID<PathSequence, Probability>; 
-    updateLog: SetID<KMUpdateRow>;
+    updateLog: Array<KMUpdateRow>;
     constructor(_id : string) {
         this.id = _id;
-        this.updateLog = new SetID();
+        this.updateLog = new Array();
         this.pathPrior = new MapID();
     }
     getPath () : MapID<Path, Probability> { return this.byPath; }
@@ -32,11 +32,15 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<Path, Probability>(), 
                                     new MapID<PathSequence, Probability>(), 
                                     new MapID<PathSequence, Probability>());
-        this.updateLog.add(input);
+        this.updateLog.push(input);
         return this.send();
     }
     hasResponse(lr : LearnerResponse): boolean {
-        return this.updateLog[lr.id] !== undefined;
+        return this.updateLog.findIndex(el => el.response == lr) >= 0
+    }
+    /** TODO implement a search over the log returning the LR with the most recent timestamp */
+    getMostRecentResponse(pr: Prompt): LearnerResponse | undefined {
+        return undefined;
     }
     send() : Promise<void | WriteResult> {
         // Adding a new object
@@ -68,7 +72,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
 /** timestamp is set at the time it is constructed */
 class KMUpdateRow {
     timestamp : string;
-    id: string;
+    question: string;
     response : LearnerResponse;
     pathBefore : MapID<Path, Probability>;
     pathAfter  : MapID<Path, Probability>;
@@ -78,7 +82,7 @@ class KMUpdateRow {
             _pathSeqBefore: MapID<PathSequence, Probability>, _pathSeqAfter: MapID<PathSequence, Probability>) {
         this.timestamp = new Date().toJSON();
         this.response = _response;
-        this.id = _response.id;
+        this.question = _response.id;
         this.pathBefore = _pathBefore;
         this.pathAfter = _pathAfter;
         this.pathSeqBefore = _pathSeqBefore;
