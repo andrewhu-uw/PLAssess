@@ -3,9 +3,14 @@ import { DB, FirestoreSync, toPlainObject } from "./DB";
 import { WriteResult } from "@google-cloud/firestore";
 import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 
+export function createLearnerFromDownloaded(l: Learner): Learner {
+    var temp = new Learner(l.difficultyStyle, l.mindset, l.firstName, l.lastName, l.preferredName, 
+        l.gender, l.birthDate, l.age);
+    return Object.assign(temp, l);
+}
 export class Learner implements FirestoreSync {
     id : string;
-    testSessions : TestSession[] = [];
+    testSessionIDs : string[] = [];
     currentTestSession : TestSession = null;
     constructor(public difficultyStyle: boolean,
                 public mindset: number,
@@ -16,11 +21,9 @@ export class Learner implements FirestoreSync {
                 public birthDate: string,
                 public age: number) {}
     async send () : Promise<void | WriteResult> {
-        // TODO deal with errors from sending the testSessions
-        this.testSessions.forEach(session => {
-            session.send().catch(reason => console.error(reason));
-        })
-        // Adding a new object
+        // TODO add indirection to currentTestSession
+        // TODO wrap this promise with the Learner update promise
+        //if (this.currentTestSession != null) this.currentTestSession.send();
         if (this.id == undefined) {
             return DB.getInstance().collection(Learner.name).add(
                 toPlainObject(this)
@@ -41,7 +44,7 @@ export class Learner implements FirestoreSync {
     }
     setCurrentTestSession(t : TestSession) {
         this.currentTestSession = t;
-        this.testSessions.push(t);
+        this.testSessionIDs.push(t.KMID);
     }
 }
 
@@ -53,17 +56,11 @@ export class TestSession implements FirestoreSync {
         if (KMID == null) {
             throw "ID is null/undefined";
         }
+        this.id = KMID;
     }
     send() : Promise<void | WriteResult> {
         if (this.id == undefined) {
-            return DB.getInstance().collection(TestSession.name).add(
-                toPlainObject(this)
-            ).then(docRef => {
-                this.id = docRef.id;
-                /* return docRef.update({
-                    id : docRef.id
-                }); */
-            })
+            throw "TestSession id should never be null, TestSession is identified by knowledgeModel ID"
         } else {
             return DB.getInstance().collection(TestSession.name).doc(this.id).set(toPlainObject(this));
         }

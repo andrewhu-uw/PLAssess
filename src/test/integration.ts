@@ -1,7 +1,7 @@
 import "mocha"
 import { expect } from "chai"
 import { MapID } from "../Map";
-import { Path, Probability, LearnerResponse, Prompt, Learner, TestSession, LearnerModel } from "../LearnerModel";
+import { Path, Probability, LearnerResponse, Prompt, Learner, TestSession, LearnerModel, Problem, Program } from "../LearnerModel";
 import { DB } from "../DB";
 import { createLearnerKnowledgeModel, LearnerKnowledgeModel } from "../LearnerKnowledgeModel";
 
@@ -85,8 +85,8 @@ describe("Integration tests", () => {
         var testSess = new TestSession(lindaKM.id);
         lm.setCurrentTestSession(testSess);
         
-        lm.learner.testSessions.forEach(session => {
-            expect(typeof(session.KMID)).to.equal("string");
+        lm.learner.testSessionIDs.forEach(sessionID => {
+            expect(typeof(sessionID)).to.equal("string");
         })
 
         // App loads questions to show Linda
@@ -153,11 +153,13 @@ describe("Integration tests", () => {
         var lm: LearnerModel = await DB.getLearnerModel(lindaID);
         var testSess: TestSession = lm.learner.currentTestSession;
         expect(testSess).to.exist;
+        var problem: Problem = testSess.currentProblem;
 
-        expect((testSess.currentProblem
+        // We have the latest prompt answers
+        expect((problem
                 .currentPromptAnswers["TZaKbrxQ6FrDrj2d64mv"] as LearnerResponse)
                 .answer).to.equal("24");
-        expect((testSess.currentProblem
+        expect((problem
             .currentPromptAnswers["Tn4kBa5LGDkrpI1hgYdZ"] as LearnerResponse)
             .answer).to.equal("351");
         
@@ -170,5 +172,24 @@ describe("Integration tests", () => {
         expect(lm.knowledgeModel.updateLog[2].response)
             .to.deep.equal({ answer: "24", 
                 question: {id: "TZaKbrxQ6FrDrj2d64mv", question: "4+6"}});
+        
+        // Display the problem
+        var programPromise: Promise<Program> = DB.getProgram(problem.programID); 
+        var promptPromises : Promise<Prompt>[] = [];
+        for (var i = 0; i < problem.promptIDs.length; i++) {
+            promptPromises[i] = DB.getPrompt(problem.promptIDs[i])
+        }
+        var prompts : Prompt[] = await Promise.all(promptPromises).then(values => values);      
+        // Linda answers prompt3
+        var lr3 = new LearnerResponse(prompts[2], "bar")
+        await lm.update(lr3);
+
+        var redownloadLM : LearnerModel = await DB.getLearnerModel(lindaID);
+        expect((lm.learner.currentTestSession.currentProblem
+            .currentPromptAnswers["EXHT1ubz6DafaVelDgzX"] as LearnerResponse)
+            .answer).to.equal("bar")
+        expect(redownloadLM.knowledgeModel.updateLog[3].response)
+            .to.deep.equal({ answer: "bar",
+            question: {id: "EXHT1ubz6DafaVelDgzX", question: "return foo;"}})
     })
 })

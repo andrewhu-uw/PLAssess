@@ -1,5 +1,5 @@
-import { Learner, LearnerModel, UserAction, Problem, Program, Prompt } from "./LearnerModel"
-import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
+import { Learner, LearnerModel, UserAction, Problem, Program, Prompt, createLearnerFromDownloaded, TestSession } from "./LearnerModel"
+import { LearnerKnowledgeModel, createLearnerKnowledgeModelFromDownloaded } from "./LearnerKnowledgeModel";
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { Firestore, WriteResult } from "@google-cloud/firestore";
@@ -45,10 +45,18 @@ export module DB {
     }
 
     export async function getLearner(id : string) : Promise<Learner> {
-        return getTemplate<Learner>(id, "Learner");
+        return getTemplate<Learner>(id, "Learner").then(downloaded => 
+            createLearnerFromDownloaded(downloaded)
+        );
     }
+    /** This one returns an actual LKM class with methods, unlike other DB.get* */
     export async function getLearnerKnowledgeModel(id : string) : Promise<LearnerKnowledgeModel> {
-        return getTemplate<LearnerKnowledgeModel>(id, LearnerKnowledgeModel.name);
+        return getTemplate<LearnerKnowledgeModel>(id, LearnerKnowledgeModel.name).then(downloaded => 
+            createLearnerKnowledgeModelFromDownloaded(downloaded)
+        );
+    }
+    export async function getTestSession(id : string) : Promise<TestSession> {
+        return getTemplate<TestSession>(id, TestSession.name);
     }
     export async function getProblem(id : string) : Promise<Problem> {
         return getTemplate<Problem>(id, Problem.name);

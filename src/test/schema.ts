@@ -19,7 +19,7 @@ describe("LearnerModel Schema", () => {
                 "gender": "fdsf",
                 "birthDate": new Date(5000).toJSON(),
                 "age": 5,
-                "testSessions": [],
+                "testSessionIDs": [],
                 "currentTestSession": null
             },
             "knowledgeModel": {
@@ -64,7 +64,7 @@ describe("LearnerModel Schema works with Firestore", () => {
                 "gender": "fdsf",
                 "birthDate": new Date(5000).toJSON(),
                 "age": 5,
-                "testSessions": [],
+                "testSessionIDs": [],
                 "currentTestSession": null
             },
             "knowledgeModel": {

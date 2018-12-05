@@ -9,6 +9,11 @@ export function createLearnerKnowledgeModel(_byPath : MapID<Path, Probability>):
     return temp;
 }
 
+export function createLearnerKnowledgeModelFromDownloaded(lkm : LearnerKnowledgeModel): LearnerKnowledgeModel {
+    var temp = new LearnerKnowledgeModel(null);
+    return Object.assign(temp, lkm);
+}
+
 export class LearnerKnowledgeModel implements FirestoreSync {
     id : string;
     byPath : MapID<Path, Probability>;
