@@ -47,17 +47,4 @@ describe("LKM works with Firestore", () => {
         expect(loadedLKM.byPath["hello"]).to.deep.equal({ prob: "99%"});
         expect(loadedLKM).to.deep.equal(originalLKM);
     });
-
-    it ("Should update log properly", () => {
-        var multiEntry = makeExampleMap();
-        var lkm = createLearnerKnowledgeModel(multiEntry);
-
-        lkm.update(new LearnerResponse(new Prompt("1 + 2"), "3"));
-        expect(lkm.updateLog).to.exist;
-        // TODO change this to getMostRecentResponse
-        /* expect(lkm.updateLog["1 + 2"].response).to.deep.equal({
-            id: "1 + 2",
-            answer: "3"
-        }); */
-    })
 })

@@ -1,7 +1,7 @@
 import { Path, Probability, PathSequence, LearnerResponse, Prompt } from "./LearnerModel"
 import { DB, FirestoreSync, toPlainObject } from "./DB";
-import { MapID, SetID } from "./Map";
-import { WriteResult } from "@google-cloud/firestore";
+import { MapID, SetID,} from "./Map";
+import { WriteResult, FieldValue } from "@google-cloud/firestore";
 
 export function createLearnerKnowledgeModel(_byPath : MapID<Path, Probability>): LearnerKnowledgeModel {
     var temp = new LearnerKnowledgeModel(null);
@@ -20,7 +20,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     byPathSequences : MapID<PathSequence, Probability>;
     pathPrior : MapID<Path, Probability>; // should be in constructor, can have a default argument
     pathSeqPrior : MapID<PathSequence, Probability>; 
-    updateLog: KMUpdateRow[];
+    updateLog: Array<KMUpdateRow>;
     constructor(_id : string) {
         this.id = _id;
         this.updateLog = new Array();
@@ -30,6 +30,7 @@ export class LearnerKnowledgeModel implements FirestoreSync {
     getPathSequences() : MapID<PathSequence, Probability> { return this.byPathSequences; }
     setPathPrior(p: Path, prob: Probability) { this.pathPrior.set(p, prob); }
     setPathSeqPrior(ps: PathSequence, prob: Probability) { this.pathSeqPrior.set(ps, prob); }
+    // Updates the server
     update(answer: LearnerResponse) {
         // create a KMUpdateRow with the input answer
         var input = new KMUpdateRow(answer, 
@@ -38,9 +39,12 @@ export class LearnerKnowledgeModel implements FirestoreSync {
                                     new MapID<PathSequence, Probability>(), 
                                     new MapID<PathSequence, Probability>());
         this.updateLog.push(input);
+        // Update the array using Firestore array semantics
+        return DB.getInstance().collection(LearnerKnowledgeModel.name).doc(this.id)
+            .update({updateLog: FieldValue.arrayUnion(toPlainObject(input))});
     }
     hasResponse(lr : LearnerResponse): boolean {
-        return this.updateLog.findIndex(el => el.response == lr) >= 0
+        throw "Not implemented yet"
     }
     send() : Promise<void | WriteResult> {
         // Adding a new object

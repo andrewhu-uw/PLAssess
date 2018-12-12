@@ -1,6 +1,6 @@
 import { MapID, SetID, MapString } from "./Map";
 import { DB, FirestoreSync, toPlainObject } from "./DB";
-import { WriteResult } from "@google-cloud/firestore";
+import { WriteResult, FieldValue } from "@google-cloud/firestore";
 import { LearnerKnowledgeModel } from "./LearnerKnowledgeModel";
 
 export function createLearnerFromDownloaded(l: Learner): Learner {
@@ -42,9 +42,16 @@ export class Learner implements FirestoreSync {
             );
         }
     }
-    setCurrentTestSession(t : TestSession) {
+    // Returns old test session
+    setCurrentTestSession(t : TestSession): TestSession {
+        var old = this.currentTestSession;
+        if (this.currentTestSession != null) {
+            // TODO handle error so test isn't lost forever if send fails
+            this.currentTestSession.send();
+        }
         this.currentTestSession = t;
         this.testSessionIDs.push(t.KMID);
+        return old;
     }
 }
 
@@ -59,13 +66,13 @@ export class TestSession implements FirestoreSync {
         this.id = KMID;
     }
     send() : Promise<void | WriteResult> {
-        if (this.id == undefined) {
+        if (this.id == null) {
             throw "TestSession id should never be null, TestSession is identified by knowledgeModel ID"
         } else {
             return DB.getInstance().collection(TestSession.name).doc(this.id).set(toPlainObject(this));
         }
     }
-    setCurrentProblem(input : Problem) : void {
+    addCurrentProblem(input : Problem) : void {
         if (this.currentProblem == undefined) {
             this.currentProblem = input;
         } else {
@@ -121,15 +128,17 @@ export class LearnerModel implements FirestoreSync {
     addSurveyAnswer (answer: LearnerResponse) {
         this.knowledgeModel.update(answer);
     }
-    setCurrentTestSession (ts : TestSession) {
-        this.learner.setCurrentTestSession(ts);
-    }
     /** This updates the testSession's most recent answers as well as the LKM */
-    update (lr : LearnerResponse): Promise<WriteResult> {
+    update (lr : LearnerResponse): Promise<any> {
         // Emulate MapID, figure out if there's a cleaner way to do this
         this.learner.currentTestSession.currentProblem.currentPromptAnswers[lr.question.id] = lr;
-        this.knowledgeModel.update(lr);
-        return this.send();
+        var updateParam = "currentTestSession.currentProblem.currentPromptAnswers."+lr.question.id;
+        var updateSemantics = {};
+        updateSemantics[updateParam] = toPlainObject(lr);
+        var learnerPromise = DB.getInstance().collection(Learner.name).doc(this.learner.id)
+            .update(updateSemantics);
+        var lkmPromise = this.knowledgeModel.update(lr);
+        return Promise.all([learnerPromise, lkmPromise]);
     }
     
     /** What are all of the current answers to all of the questions
@@ -153,5 +162,14 @@ export class LearnerModel implements FirestoreSync {
             "userActionLog" : toPlainObject(this.userActionLog)
         });
         return Promise.all([learnerPromise, lkmPromise, lmPromise])
+    }
+    getID(): string {
+        return this.learner.id;
+    }
+    createNewTestSession(): TestSession {
+        if (this.learner.id == null || this.knowledgeModel.id == null) throw "User must be uploaded first"
+        var created = new TestSession(this.knowledgeModel.id);
+        this.learner.setCurrentTestSession(created);
+        return created;
     }
 }

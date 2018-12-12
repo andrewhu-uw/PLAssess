@@ -4,6 +4,7 @@ import { MapID } from "../Map";
 import { Path, Probability, LearnerResponse, Prompt, Learner, TestSession, LearnerModel, Problem, Program } from "../LearnerModel";
 import { DB } from "../DB";
 import { createLearnerKnowledgeModel, LearnerKnowledgeModel } from "../LearnerKnowledgeModel";
+import { createNewUser } from "../Controller";
 
 describe("Integration tests", () => {
     before(() => {
@@ -75,15 +76,10 @@ describe("Integration tests", () => {
     it ("Multiple session integration test", async function(){
         this.timeout(5000);
         // Learner Linda goes to the site, and creates an account
-        var linda = new Learner(true, 5, "Linda", "Langley", "Linda", "F", "11/17/1998", 20);
-        var lindaKM = new LearnerKnowledgeModel(null);
-        var lm = new LearnerModel(linda, lindaKM);
-        // LearnerModel must be uploaded before a TestSession can be created
-        await lm.send();
+        var lm = await createNewUser( "Linda", "Langley", "F", "11/17/1998", 20);
 
         // Linda starts a new test
-        var testSess = new TestSession(lindaKM.id);
-        lm.setCurrentTestSession(testSess);
+        var testSess = lm.createNewTestSession();
         
         lm.learner.testSessionIDs.forEach(sessionID => {
             expect(typeof(sessionID)).to.equal("string");
@@ -101,12 +97,12 @@ describe("Integration tests", () => {
             varName: "varValue"
         });
 
-        testSess.setCurrentProblem(problem);
-        // Upload the new learner, LKM, and test session
+        testSess.addCurrentProblem(problem);
+        // Update the test session
         lm.send();
 
         // Retrieve the program and prompts, so that they can be displayed
-        const program = await DB.getProgram(problem.programID);
+        const program = DB.getProgram(problem.programID);
         // Would display using program
 
         // Load all of the prompts
@@ -127,7 +123,8 @@ describe("Integration tests", () => {
         // Also updates the server
         var lkmUpdatePromise = lm.update(lr1a);
 
-        expect(lm.knowledgeModel.hasResponse(lr1a));  // Verify the knowledge model updated locally
+        // TODO implement hasResponse
+        //expect(lm.knowledgeModel.hasResponse(lr1a));  // Verify the knowledge model updated locally
         // Maybe redownload the LKM here and test that it worked
         await lkmUpdatePromise;
         var redownload = await DB.getLearnerKnowledgeModel(lm.knowledgeModel.id);
@@ -136,16 +133,20 @@ describe("Integration tests", () => {
         // Linda answers prompt2 in that program
         var lr2 = new LearnerResponse(prompts[1], "351");
         // We have to await here because its possible that lr2 will arrive later than lr1b
-        await lm.update(lr2);
+        var lr2promise = lm.update(lr2);
+        // TODO redownload and check that the LKM updated correctly
 
         // Linda goes back and changes her answer to prompt1
         var lr1b = new LearnerResponse(prompts[0], "24");
         // Adds a new response for prompt1
-        await lm.update(lr1b);
-        // TODO check that both responses to prompt1 are still in the LKM
-
+        var lr1bpromise = lm.update(lr1b);
+        // TODO redownload and that the LKM has the "24" answer as well as the old answer
+        
         // Linda logs off, save her id because I don't have auth working
-        lindaID = linda.id
+        lindaID = lm.getID();
+        // TODO save objects to check for equality
+        await lr1bpromise;
+        await lr2promise;
     });
 
     it ("Multiple session integration test pt.2", async function() {
