@@ -73,6 +73,7 @@ describe("Integration tests", () => {
     });
 
     var lindaID = undefined;
+    var savedLM : LearnerModel = null;
     it ("Multiple session integration test", async function(){
         this.timeout(5000);
         // Learner Linda goes to the site, and creates an account
@@ -131,7 +132,7 @@ describe("Integration tests", () => {
         expect(redownload).to.deep.equal(lm.knowledgeModel);
 
         // Linda answers prompt2 in that program
-        var lr2 = new LearnerResponse(prompts[1], "351");
+        var lr2 = new LearnerResponse(prompts[1], '"hello"');
         // We have to await here because its possible that lr2 will arrive later than lr1b
         var lr2promise = lm.update(lr2);
         // TODO redownload and check that the LKM updated correctly
@@ -145,6 +146,7 @@ describe("Integration tests", () => {
         // Linda logs off, save her id because I don't have auth working
         lindaID = lm.getID();
         // TODO save objects to check for equality
+        savedLM = lm;
         await lr1bpromise;
         await lr2promise;
     });
@@ -157,22 +159,13 @@ describe("Integration tests", () => {
         var problem: Problem = testSess.currentProblem;
 
         // We have the latest prompt answers
-        expect((problem
-                .currentPromptAnswers["TZaKbrxQ6FrDrj2d64mv"] as LearnerResponse)
-                .answer).to.equal("24");
-        expect((problem
-            .currentPromptAnswers["Tn4kBa5LGDkrpI1hgYdZ"] as LearnerResponse)
-            .answer).to.equal("351");
+        expect(lm.learner).to.deep.equal(savedLM.learner);
         
-        expect(lm.knowledgeModel.updateLog[0].response)
-            .to.deep.equal({ answer: "42", 
-                question: {id: "TZaKbrxQ6FrDrj2d64mv", question: "4+6"}});
-        expect(lm.knowledgeModel.updateLog[1].response)
-            .to.deep.equal({ answer: "351", 
-                question: {id: "Tn4kBa5LGDkrpI1hgYdZ", question: "print(\"hello\")"}});
-        expect(lm.knowledgeModel.updateLog[2].response)
-            .to.deep.equal({ answer: "24", 
-                question: {id: "TZaKbrxQ6FrDrj2d64mv", question: "4+6"}});
+        { // Construct a set of update rows and check subset
+            let savedLMSet = new Set(savedLM.knowledgeModel.updateLog);
+            let lmSet = new Set(lm.knowledgeModel.updateLog);
+            lmSet.forEach(row => expect(savedLMSet.has(row)));
+        }
         
         // Display the problem
         var programPromise: Promise<Program> = DB.getProgram(problem.programID); 
@@ -183,14 +176,15 @@ describe("Integration tests", () => {
         var prompts : Prompt[] = await Promise.all(promptPromises).then(values => values);      
         // Linda answers prompt3
         var lr3 = new LearnerResponse(prompts[2], "bar")
-        await lm.update(lr3);
+        var lr3promise = lm.update(lr3);
 
-        var redownloadLM : LearnerModel = await DB.getLearnerModel(lindaID);
-        expect((lm.learner.currentTestSession.currentProblem
-            .currentPromptAnswers["EXHT1ubz6DafaVelDgzX"] as LearnerResponse)
-            .answer).to.equal("bar")
-        expect(redownloadLM.knowledgeModel.updateLog[3].response)
-            .to.deep.equal({ answer: "bar",
-            question: {id: "EXHT1ubz6DafaVelDgzX", question: "return foo;"}})
+        {
+            await lr3promise;
+            let redownloadLM : LearnerModel = await DB.getLearnerModel(lindaID);
+            expect(redownloadLM.learner).to.deep.equal(lm.learner)
+            let redownloadLMSet = new Set(redownloadLM.knowledgeModel.updateLog);
+            let lmSet = new Set(lm.knowledgeModel.updateLog);
+            lmSet.forEach(row => expect(redownloadLMSet.has(row)));
+        }
     })
 })
