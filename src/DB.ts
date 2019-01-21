@@ -2,7 +2,6 @@ import { Learner, LearnerModel, UserAction, Problem, Program, Prompt,
     createLearnerFromDownloaded, TestSession } from "./LearnerModel"
 import { LearnerKnowledgeModel, createLearnerKnowledgeModelFromDownloaded } from "./LearnerKnowledgeModel";
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
 import { Firestore, WriteResult } from "@google-cloud/firestore";
 import { MapString, MapID, SetID } from "./Map";
 
@@ -37,7 +36,8 @@ export module DB {
 
     /** Currently, LearnerModel is indexed by learner ID*/
     export async function getLearnerModel(learnerID: string) : Promise<LearnerModel> {
-        var lmRef : LearnerModelRef = await db.collection('LearnerModel').doc(learnerID).get().then((doc) => {
+        var lmRef : LearnerModelRef = await db.collection('LearnerModel').
+        doc(learnerID).get().then((doc) => {
             return doc.data() as LearnerModelRef;
         });
         var learner : Learner = await getLearner(lmRef.learner);

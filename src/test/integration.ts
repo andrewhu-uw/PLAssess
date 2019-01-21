@@ -1,7 +1,8 @@
 import "mocha"
 import { expect } from "chai"
 import { MapID } from "../Map";
-import { Path, Probability, LearnerResponse, Prompt, Learner, TestSession, LearnerModel, Problem, Program } from "../LearnerModel";
+import { Path, Probability, LearnerResponse, Prompt, 
+    TestSession, LearnerModel, Problem, Program } from "../LearnerModel";
 import { DB } from "../DB";
 import { createLearnerKnowledgeModel, LearnerKnowledgeModel } from "../LearnerKnowledgeModel";
 import { createNewUser } from "../Controller";
@@ -107,12 +108,12 @@ describe("Integration tests", () => {
         // Would display using program
 
         // Load all of the prompts
-        // TODO figure out if there is a better way to do this
+        // TODO refactor
         var promptPromises : Promise<Prompt>[] = [];
         for (var i = 0; i < problem.promptIDs.length; i++) {
             promptPromises[i] = DB.getPrompt(problem.promptIDs[i])
         }
-        var prompts : Prompt[] = await Promise.all(promptPromises).then(values => values);
+        var prompts : Prompt[] = await Promise.all(promptPromises);
 
         // Linda answers prompt1
         // Display using prompts[0].getQuestion()
